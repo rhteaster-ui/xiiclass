@@ -25,6 +25,46 @@ interface LiveSummary {
   semester: string;
 }
 
+const TYPED_PHRASES = ["Lebih Presisi.", "Lebih Transparan.", "Siap Cetak A4."];
+
+function TypewriterHeading() {
+  const [phraseIdx, setPhraseIdx] = useState(0);
+  const [charIdx, setCharIdx] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const current = TYPED_PHRASES[phraseIdx];
+    const delay = deleting ? 45 : charIdx === current.length ? 1800 : 80;
+    const t = setTimeout(() => {
+      if (!deleting) {
+        if (charIdx < current.length) {
+          setCharIdx((c) => c + 1);
+        } else {
+          setDeleting(true);
+        }
+      } else {
+        if (charIdx > 0) {
+          setCharIdx((c) => c - 1);
+        } else {
+          setDeleting(false);
+          setPhraseIdx((p) => (p + 1) % TYPED_PHRASES.length);
+        }
+      }
+    }, delay);
+    return () => clearTimeout(t);
+  }, [phraseIdx, charIdx, deleting]);
+
+  return (
+    <span className="text-[#0F5132] inline-flex items-baseline">
+      <span>{TYPED_PHRASES[phraseIdx].slice(0, charIdx)}</span>
+      <span
+        aria-hidden="true"
+        className="animate-caret ml-1 inline-block h-[0.88em] w-[3px] rounded-full bg-[#A3E635] ring-1 ring-[#0F5132]/30 align-baseline"
+      />
+    </span>
+  );
+}
+
 export default function LandingPage() {
   const { navigateWithCurtain } = useCurtainNavigation();
   const [stats, setStats] = useState<LiveSummary>({
@@ -111,12 +151,12 @@ export default function LandingPage() {
           </button>
         </header>
 
-        {/* Hero Section with Staggered Cascade */}
+        {/* Hero Section with Typewriter & 3D Depth Cards */}
         <section className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-6 pb-12 text-center">
           <div className="mx-auto max-w-3xl space-y-6">
             <div
               className="animate-cascade inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-xs font-extrabold text-[var(--canopy)] shadow-sm ring-1 ring-[var(--border-strong)]"
-              style={{ animationDelay: "40ms" }}
+              style={{ animationDelay: "60ms" }}
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
@@ -128,16 +168,16 @@ export default function LandingPage() {
             </div>
 
             <h1
-              className="animate-cascade text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.08]"
-              style={{ animationDelay: "100ms" }}
+              className="animate-cascade text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.12] min-h-[2.3em] sm:min-h-[2.2em]"
+              style={{ animationDelay: "140ms" }}
             >
-              Rekap Kehadiran Siswa{" "}
-              <span className="text-[#0F5132]">Lebih Presisi.</span>
+              Rekap Kehadiran Siswa <br className="hidden sm:inline" />
+              <TypewriterHeading />
             </h1>
 
             <p
               className="animate-cascade mx-auto max-w-xl text-base sm:text-lg text-[var(--ink-muted)] leading-relaxed"
-              style={{ animationDelay: "160ms" }}
+              style={{ animationDelay: "220ms" }}
             >
               Pantau persentase kehadiran per kelas secara terbuka, kelola data rekap & backup Excel oleh Admin, dan cetak laporan standar sekolah dalam satu ketukan.
             </p>
@@ -145,7 +185,7 @@ export default function LandingPage() {
             {/* Primary & Secondary CTAs */}
             <div
               className="animate-cascade flex flex-wrap items-center justify-center gap-3 pt-1"
-              style={{ animationDelay: "220ms" }}
+              style={{ animationDelay: "300ms" }}
             >
               <button
                 type="button"
@@ -166,8 +206,8 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Floating Live Snapshot Strip */}
-            <div className="animate-cascade pt-4" style={{ animationDelay: "280ms" }}>
+            {/* 3D Depth Floating Live Snapshot Strip */}
+            <div className="animate-card-3d pt-4" style={{ animationDelay: "380ms" }}>
               <div className="mx-auto max-w-2xl sheet-overlap rounded-3xl p-4 sm:p-5 grid grid-cols-3 gap-3 text-left">
                 <div className="rounded-2xl bg-[var(--bg)] p-3 sm:p-4">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-muted)]">
@@ -200,7 +240,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* 4-Column Capability Strip */}
+        {/* 4-Column 3D Perspective Capability Strip */}
         <section id="fitur" className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
@@ -208,25 +248,25 @@ export default function LandingPage() {
                 title: "Multi-Kelas Terpadu",
                 desc: "Ringkasan kehadiran per kelas dengan persentase dan bar komposisi otomatis.",
                 icon: UsersThree,
-                delay: "320ms",
+                delay: "420ms",
               },
               {
                 title: "Review & Admin",
                 desc: "Siswa dan guru bebas memantau rekap; edit data terkunci aman untuk Admin.",
                 icon: ShieldCheck,
-                delay: "370ms",
+                delay: "520ms",
               },
               {
                 title: "Cetak A4 Formal",
                 desc: "Layout A4 Landscape siap cetak lengkap dengan Kop Surat resmi lembaga.",
                 icon: Printer,
-                delay: "420ms",
+                delay: "620ms",
               },
               {
                 title: "Backup & Ekspor XLSX",
                 desc: "Ekspor laporan dan impor ulang backup spreadsheet .xlsx langsung dari Admin.",
                 icon: FileXls,
-                delay: "470ms",
+                delay: "720ms",
               },
             ].map((item) => {
               const Icon = item.icon;
@@ -234,7 +274,7 @@ export default function LandingPage() {
                 <div
                   key={item.title}
                   style={{ animationDelay: item.delay }}
-                  className="animate-cascade card-pro rounded-3xl p-5 space-y-3"
+                  className="animate-card-3d card-pro rounded-3xl p-5 space-y-3"
                 >
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--surface-mint)] text-[var(--canopy)]">
                     <Icon size={22} weight="fill" />
@@ -251,7 +291,10 @@ export default function LandingPage() {
 
         {/* Deep Forest Showcase Banner */}
         <section className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 pb-12">
-          <div className="relative overflow-hidden rounded-3xl bg-[#0A3D26] p-6 sm:p-9 text-white shadow-[0_20px_45px_-14px_rgba(7,41,25,0.45)]">
+          <div
+            className="animate-card-3d relative overflow-hidden rounded-3xl bg-[#0A3D26] p-6 sm:p-9 text-white shadow-[0_20px_45px_-14px_rgba(7,41,25,0.45)]"
+            style={{ animationDelay: "780ms" }}
+          >
             <AmbientBackdrop variant="canopy" />
             <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div className="space-y-2.5 max-w-xl">

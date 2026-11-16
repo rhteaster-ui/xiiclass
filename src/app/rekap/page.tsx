@@ -10,9 +10,9 @@ import {
   ArrowsDownUp,
   WarningCircle,
   ArrowClockwise,
-  CalendarBlank,
 } from "@phosphor-icons/react";
 import { AppShell } from "@/components/AppShell";
+import { PeriodPicker } from "@/components/CustomPickers";
 import { withBasePath } from "@/lib/paths";
 
 interface RekapRow {
@@ -131,7 +131,7 @@ function RekapContent() {
   const handleExportExcel = () => {
     const exportData = sortedRows.map((r, idx) => ({
       No: idx + 1,
-      "NIS/NISN": r.nis,
+      "No. Absen": r.nis,
       "Nama Siswa": r.name,
       Kelas: r.class_name,
       "L/P": r.gender,
@@ -217,8 +217,8 @@ function RekapContent() {
           className="no-print relative z-20 -mt-8 mx-3.5 lg:mx-0 sheet-overlap rounded-3xl p-4 space-y-3 animate-cascade"
           style={{ animationDelay: "40ms" }}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <div className="relative sm:col-span-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <div className="relative flex-1">
               <MagnifyingGlass
                 size={18}
                 weight="bold"
@@ -228,25 +228,13 @@ function RekapContent() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari nama siswa atau NIS/NISN..."
-                aria-label="Cari nama atau NIS"
+                placeholder="Cari nama siswa atau No. Absen..."
+                aria-label="Cari nama atau No. Absen"
                 className="w-full rounded-2xl bg-[var(--bg)] pl-10 pr-4 py-2.5 text-sm font-medium text-[var(--ink)] min-h-[42px]"
               />
             </div>
 
-            <label className="flex items-center justify-between gap-2 rounded-2xl bg-[var(--bg)] px-3.5 py-2 min-h-[42px]">
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--ink-muted)]">
-                <CalendarBlank size={15} weight="bold" className="text-[var(--canopy)]" />
-                Periode
-              </span>
-              <input
-                type="month"
-                value={period}
-                onChange={(e) => setPeriod(e.target.value)}
-                aria-label="Pilih Periode Bulan"
-                className="font-num bg-transparent text-xs sm:text-sm font-bold text-[var(--ink)] focus:outline-none"
-              />
-            </label>
+            <PeriodPicker value={period} onChange={setPeriod} />
           </div>
 
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
@@ -327,7 +315,7 @@ function RekapContent() {
                   <thead>
                     <tr className="bg-[var(--surface-raised)] border-b border-[var(--border-strong)] text-xs font-bold uppercase tracking-wider text-[var(--ink-muted)]">
                       <th className="py-3.5 px-3.5 text-right w-12">No</th>
-                      <th className="py-3.5 px-3.5">NIS/NISN</th>
+                      <th className="py-3.5 px-3.5">No. Absen</th>
                       <th
                         className="py-3.5 px-3.5 sticky left-0 bg-[var(--surface-raised)] z-10"
                         aria-sort={

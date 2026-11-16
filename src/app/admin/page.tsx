@@ -16,10 +16,10 @@ import {
   Table,
   FileXls,
   UploadSimple,
-  CalendarBlank,
 } from "@phosphor-icons/react";
 import { AppShell } from "@/components/AppShell";
 import { AmbientBackdrop } from "@/components/AmbientBackdrop";
+import { PeriodPicker, CustomSelect } from "@/components/CustomPickers";
 import { withBasePath } from "@/lib/paths";
 
 interface RekapEntry {
@@ -258,7 +258,7 @@ export default function AdminPage() {
 
       const sheetRows = rows.map((r, idx) => ({
         No: idx + 1,
-        "NIS/NISN": r.nis,
+        "No. Absen": r.nis,
         "Nama Siswa": r.name,
         Kelas: r.class_name,
         "L/P": r.gender,
@@ -292,7 +292,7 @@ export default function AdminPage() {
 
       const normalized = rawRows
         .map((r) => ({
-          nis: String(r["NIS/NISN"] ?? r["NIS"] ?? r["nis"] ?? "").trim(),
+          nis: String(r["No. Absen"] ?? r["No Absen"] ?? r["NIS/NISN"] ?? r["NIS"] ?? r["nis"] ?? "").trim(),
           name: String(r["Nama Siswa"] ?? r["Nama"] ?? r["name"] ?? "").trim(),
           class_name: String(r["Kelas"] ?? r["class_name"] ?? "").trim(),
           gender: (String(r["L/P"] ?? r["gender"] ?? "L").toUpperCase() === "P" ? "P" : "L") as "L" | "P",
@@ -580,29 +580,14 @@ export default function AdminPage() {
               <section className="space-y-4">
                 <div className="card-pro rounded-3xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
                   <div className="flex flex-wrap items-center gap-2.5">
-                    <select
+                    <CustomSelect
                       value={selectedClassId}
-                      onChange={(e) => setSelectedClassId(e.target.value)}
-                      aria-label="Pilih Kelas"
-                      className="rounded-2xl bg-[var(--bg)] px-3.5 py-2 text-sm font-bold text-[var(--ink)] min-h-[42px]"
-                    >
-                      {classes.map((c) => (
-                        <option key={c.id} value={String(c.id)}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={setSelectedClassId}
+                      ariaLabel="Pilih Kelas"
+                      options={classes.map((c) => ({ value: String(c.id), label: c.name }))}
+                    />
 
-                    <label className="inline-flex items-center gap-2 rounded-2xl bg-[var(--bg)] px-3.5 py-2 min-h-[42px]">
-                      <CalendarBlank size={15} weight="bold" className="text-[var(--canopy)]" />
-                      <input
-                        type="month"
-                        value={period}
-                        onChange={(e) => setPeriod(e.target.value)}
-                        aria-label="Pilih Periode"
-                        className="font-num bg-transparent text-sm font-bold text-[var(--ink)] focus:outline-none"
-                      />
-                    </label>
+                    <PeriodPicker value={period} onChange={setPeriod} />
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
@@ -652,7 +637,7 @@ export default function AdminPage() {
                       <thead>
                         <tr className="bg-[var(--surface-raised)] border-b border-[var(--border-strong)] text-xs font-bold uppercase tracking-wider text-[var(--ink-muted)]">
                           <th className="py-3.5 px-4 text-right w-12">No</th>
-                          <th className="py-3.5 px-3">NIS/NISN</th>
+                          <th className="py-3.5 px-3">No. Absen</th>
                           <th className="py-3.5 px-3 sticky left-0 bg-[var(--surface-raised)] z-10">
                             Nama Siswa
                           </th>
@@ -768,20 +753,14 @@ export default function AdminPage() {
                 </div>
 
                 <div className="card-pro rounded-3xl p-5 space-y-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <h2 className="text-base font-extrabold text-[var(--ink)]">Tambah Siswa</h2>
-                    <select
+                    <CustomSelect
                       value={selectedClassId}
-                      onChange={(e) => setSelectedClassId(e.target.value)}
-                      aria-label="Kelas tujuan siswa"
-                      className="rounded-xl bg-[var(--bg)] px-3 py-1.5 text-xs font-bold"
-                    >
-                      {classes.map((c) => (
-                        <option key={c.id} value={String(c.id)}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={setSelectedClassId}
+                      ariaLabel="Kelas tujuan siswa"
+                      options={classes.map((c) => ({ value: String(c.id), label: c.name }))}
+                    />
                   </div>
 
                   <form onSubmit={handleAddStudent} className="space-y-3">
@@ -790,7 +769,7 @@ export default function AdminPage() {
                       required
                       value={newStudentNis}
                       onChange={(e) => setNewStudentNis(e.target.value)}
-                      placeholder="NIS / NISN"
+                      placeholder="No. Absen (misal: 07)"
                       className="font-num w-full rounded-2xl bg-[var(--bg)] px-4 py-2.5 text-sm font-semibold"
                     />
                     <div className="flex gap-2">
@@ -802,15 +781,15 @@ export default function AdminPage() {
                         placeholder="Nama Lengkap Siswa"
                         className="flex-1 rounded-2xl bg-[var(--bg)] px-4 py-2.5 text-sm font-medium"
                       />
-                      <select
+                      <CustomSelect
                         value={newStudentGender}
-                        onChange={(e) => setNewStudentGender(e.target.value === "P" ? "P" : "L")}
-                        aria-label="Jenis Kelamin"
-                        className="rounded-2xl bg-[var(--bg)] px-3 py-2.5 text-sm font-bold"
-                      >
-                        <option value="L">L</option>
-                        <option value="P">P</option>
-                      </select>
+                        onChange={(v) => setNewStudentGender(v === "P" ? "P" : "L")}
+                        ariaLabel="Jenis Kelamin"
+                        options={[
+                          { value: "L", label: "L" },
+                          { value: "P", label: "P" },
+                        ]}
+                      />
                     </div>
                     <button
                       type="submit"

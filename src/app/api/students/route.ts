@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     const gender = body.gender === "P" ? "P" : "L";
 
     if (!classId || !nis || !name) {
-      return NextResponse.json({ error: "Kelas, NIS/NISN, dan Nama wajib diisi." }, { status: 400 });
+      return NextResponse.json({ error: "Kelas, No. Absen, dan Nama wajib diisi." }, { status: 400 });
     }
 
     const db = getDb();

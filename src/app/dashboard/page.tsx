@@ -9,7 +9,6 @@ import {
   WarningCircle,
   UsersThree,
   ArrowUpRight,
-  CalendarBlank,
   ArrowClockwise,
   GraduationCap,
   BookOpenText,
@@ -18,6 +17,7 @@ import {
 } from "@phosphor-icons/react";
 import { AppShell } from "@/components/AppShell";
 import { AmbientBackdrop } from "@/components/AmbientBackdrop";
+import { PeriodPicker } from "@/components/CustomPickers";
 import { withBasePath } from "@/lib/paths";
 
 interface OverviewData {
@@ -181,16 +181,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <label className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 ring-1 ring-white/20 backdrop-blur-md">
-                <CalendarBlank size={14} weight="bold" className="text-[#A3E635]" />
-                <input
-                  type="month"
-                  value={period}
-                  onChange={(e) => setPeriod(e.target.value)}
-                  aria-label="Pilih Periode Bulan"
-                  className="font-num bg-transparent text-xs font-bold text-white focus:outline-none [color-scheme:dark]"
-                />
-              </label>
+              <PeriodPicker value={period} onChange={setPeriod} variant="canopy" />
             </div>
 
             {/* Hero Metric & Action Row */}

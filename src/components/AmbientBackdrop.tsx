@@ -1,13 +1,22 @@
 "use client";
 
+import {
+  PencilSimpleLine,
+  ClipboardText,
+  ChartBar,
+  CheckCircle,
+  GraduationCap,
+  FileXls,
+} from "@phosphor-icons/react";
+
 export function AmbientBackdrop({ variant = "light" }: { variant?: "light" | "canopy" }) {
   if (variant === "canopy") {
     return (
       <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="animate-float-orb absolute -top-12 -right-10 h-44 w-44 rounded-full bg-[#A3E635]/15 blur-2xl" />
-        <div className="animate-float-orb-rev absolute -bottom-16 left-1/4 h-52 w-52 rounded-full bg-emerald-400/12 blur-2xl" />
+        <div className="animate-float-orb absolute -top-12 -right-10 h-44 w-44 rounded-full bg-[#A3E635]/18 blur-2xl" />
+        <div className="animate-float-orb-rev absolute -bottom-16 left-1/4 h-52 w-52 rounded-full bg-emerald-400/14 blur-2xl" />
         <svg
-          className="animate-spin-slow absolute -right-12 -bottom-12 h-56 w-56 text-white/8"
+          className="animate-spin-slow absolute -right-12 -bottom-12 h-56 w-56 text-white/10"
           viewBox="0 0 200 200"
           fill="none"
         >
@@ -20,20 +29,44 @@ export function AmbientBackdrop({ variant = "light" }: { variant?: "light" | "ca
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-      <div className="animate-float-orb absolute -top-24 right-[-6%] h-96 w-96 rounded-full bg-[#A3E635]/20 blur-3xl" />
-      <div className="animate-float-orb-rev absolute top-[38%] -left-24 h-80 w-80 rounded-full bg-[#115737]/12 blur-3xl" />
+      {/* Ambient Glowing Orbs */}
+      <div className="animate-float-orb absolute -top-24 right-[-6%] h-96 w-96 rounded-full bg-[#A3E635]/24 blur-3xl" />
+      <div className="animate-float-orb-rev absolute top-[38%] -left-24 h-80 w-80 rounded-full bg-[#115737]/14 blur-3xl" />
+
+      {/* Rotating Orbital Geometry */}
       <svg
-        className="animate-spin-slow absolute top-24 right-[8%] h-72 w-72 text-[#0A3D26]/[0.06]"
+        className="animate-spin-slow absolute top-20 right-[7%] h-72 w-72 text-[#0A3D26]/[0.07]"
         viewBox="0 0 200 200"
         fill="none"
       >
         <circle cx="100" cy="100" r="92" stroke="currentColor" strokeWidth="1.2" strokeDasharray="6 8" />
         <circle cx="100" cy="100" r="68" stroke="currentColor" strokeWidth="1" strokeDasharray="2 6" />
       </svg>
-      {/* Floating tactile geometric spheres */}
-      <div className="animate-float-orb absolute top-32 left-[10%] hidden md:block h-5 w-5 rounded-full bg-gradient-to-br from-[#A3E635] to-[#115737] opacity-65 shadow-md" />
-      <div className="animate-float-orb-rev absolute top-72 right-[14%] hidden md:block h-8 w-8 rounded-2xl rotate-12 bg-gradient-to-br from-emerald-400/40 to-[#0A3D26]/30 ring-1 ring-[#0A3D26]/15 backdrop-blur-sm" />
-      <div className="animate-float-orb absolute bottom-28 left-[16%] hidden md:block h-4 w-4 rounded-full bg-[#0A3D26]/25" />
+
+      {/* Lightweight Floating Academic & Rekap Icon Chips */}
+      <div className="animate-float-icon absolute top-28 left-[5%] sm:left-[9%] flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 text-[#0A3D26] shadow-[0_12px_28px_-8px_rgba(10,61,38,0.22)] ring-1 ring-[#0A3D26]/10 backdrop-blur-sm">
+        <PencilSimpleLine size={20} weight="duotone" />
+      </div>
+
+      <div className="animate-float-icon-alt absolute top-44 right-[5%] sm:right-[10%] flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0A3D26]/90 text-[#A3E635] shadow-[0_14px_30px_-8px_rgba(10,61,38,0.35)] ring-1 ring-white/20">
+        <ClipboardText size={22} weight="duotone" />
+      </div>
+
+      <div className="animate-float-icon-alt absolute top-[54%] left-[4%] hidden md:flex h-11 w-11 items-center justify-center rounded-2xl bg-[#EAF6EE]/90 text-[#0F5132] shadow-md ring-1 ring-[#0F5132]/15">
+        <ChartBar size={20} weight="duotone" />
+      </div>
+
+      <div className="animate-float-icon absolute top-[58%] right-[6%] hidden md:flex h-11 w-11 items-center justify-center rounded-2xl bg-white/85 text-[#15803D] shadow-md ring-1 ring-[#0A3D26]/10">
+        <CheckCircle size={20} weight="duotone" />
+      </div>
+
+      <div className="animate-float-icon absolute bottom-28 left-[12%] hidden lg:flex h-10 w-10 items-center justify-center rounded-full bg-[#A3E635]/85 text-[#072919] shadow-md">
+        <GraduationCap size={19} weight="fill" />
+      </div>
+
+      <div className="animate-float-icon-alt absolute bottom-24 right-[12%] hidden lg:flex h-10 w-10 items-center justify-center rounded-2xl bg-white/85 text-[#0A3D26] shadow-md ring-1 ring-[#0A3D26]/10">
+        <FileXls size={19} weight="duotone" />
+      </div>
     </div>
   );
 }

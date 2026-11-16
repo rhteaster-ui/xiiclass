@@ -16,8 +16,8 @@ export function SplashScreen() {
       setPhase("show");
       sessionStorage.setItem("erekap_splashed", "1");
 
-      const exitTimer = setTimeout(() => setPhase("exiting"), 650);
-      const doneTimer = setTimeout(() => setPhase("done"), 950);
+      const exitTimer = setTimeout(() => setPhase("exiting"), 1150);
+      const doneTimer = setTimeout(() => setPhase("done"), 1580);
       return () => {
         clearTimeout(exitTimer);
         clearTimeout(doneTimer);
@@ -32,30 +32,48 @@ export function SplashScreen() {
   return (
     <div
       aria-hidden="true"
-      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#092E1C] text-white ${
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#062315] text-white ${
         phase === "exiting" ? "animate-splash-exit pointer-events-none" : ""
       }`}
       style={{
         backgroundImage:
-          "radial-gradient(circle at 50% 42%, rgba(21, 128, 61, 0.42), rgba(9, 46, 28, 1) 70%)",
+          "radial-gradient(circle at 50% 44%, rgba(163, 230, 53, 0.16), rgba(6, 35, 21, 1) 64%)",
       }}
     >
       <div className="flex flex-col items-center gap-5 px-6 text-center">
-        <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-white/10 p-1.5 ring-1 ring-white/25 shadow-2xl">
-          <img
-            src={withBasePath("/icon-madrasah.jpg")}
-            alt="Logo E-Rekap"
-            width={88}
-            height={88}
-            loading="eager"
-            decoding="sync"
-            className="h-full w-full rounded-2xl object-cover"
-          />
+        {/* Remotion-Style Kinetic Logo Stage */}
+        <div className="relative flex h-28 w-28 items-center justify-center">
+          <svg
+            className="animate-spin-slow absolute inset-0 h-full w-full text-[#A3E635]/60"
+            viewBox="0 0 120 120"
+            fill="none"
+          >
+            <circle cx="60" cy="60" r="54" stroke="currentColor" strokeWidth="1.5" strokeDasharray="10 7" />
+            <circle cx="60" cy="60" r="46" stroke="rgba(255,255,255,0.22)" strokeWidth="1" />
+          </svg>
+          <span className="curtain-halo absolute h-24 w-24 rounded-3xl ring-2 ring-[#A3E635]/40" />
+          <div className="animate-remotion-logo relative h-20 w-20 overflow-hidden rounded-2xl bg-white/10 p-1 ring-1 ring-white/30 shadow-2xl">
+            <img
+              src={withBasePath("/icon-madrasah.jpg")}
+              alt="Logo E-Rekap"
+              width={80}
+              height={80}
+              loading="eager"
+              decoding="sync"
+              className="h-full w-full rounded-xl object-cover"
+            />
+          </div>
         </div>
-        <div className="space-y-1.5">
-          <p className="text-2xl font-extrabold tracking-tight text-white">E-Rekap</p>
-          <p className="text-[11px] font-semibold tracking-[0.2em] uppercase text-emerald-200/80">
-            Rekapitulasi Kehadiran
+
+        <div className="space-y-2">
+          <p className="curtain-title text-3xl font-extrabold tracking-tight text-white">
+            E-Rekap
+          </p>
+          <div className="mx-auto h-0.5 w-28 overflow-hidden rounded-full bg-white/15">
+            <div className="animate-remotion-bar h-full w-full bg-[#A3E635]" />
+          </div>
+          <p className="curtain-sub font-num text-[11px] font-bold tracking-[0.22em] uppercase text-[#A3E635]">
+            Sistem Rekapitulasi Kehadiran
           </p>
         </div>
       </div>

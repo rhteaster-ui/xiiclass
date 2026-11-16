@@ -38,15 +38,15 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       setTimeout(() => {
         setStage("hold");
         router.push(href);
-      }, 280);
+      }, 420);
 
       setTimeout(() => {
         setStage("leaving");
-      }, 760);
+      }, 1180);
 
       setTimeout(() => {
         setStage("idle");
-      }, 1080);
+      }, 1660);
     },
     [router]
   );
@@ -67,13 +67,21 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
           }`}
           style={{
             backgroundImage:
-              "radial-gradient(circle at 50% 45%, rgba(163, 230, 53, 0.14), rgba(6, 35, 21, 1) 62%)",
+              "radial-gradient(circle at 50% 45%, rgba(163, 230, 53, 0.16), rgba(6, 35, 21, 1) 62%)",
           }}
         >
           <div className="flex flex-col items-center gap-5 px-6 text-center">
-            <div className="relative flex h-24 w-24 items-center justify-center">
-              <span className="curtain-halo absolute inset-0 rounded-3xl ring-2 ring-[#A3E635]/50" />
-              <div className="relative h-20 w-20 overflow-hidden rounded-2xl bg-white/10 p-1 ring-1 ring-white/25 shadow-2xl">
+            <div className="relative flex h-28 w-28 items-center justify-center">
+              <svg
+                className="animate-spin-slow absolute inset-0 h-full w-full text-[#A3E635]/65"
+                viewBox="0 0 120 120"
+                fill="none"
+              >
+                <circle cx="60" cy="60" r="54" stroke="currentColor" strokeWidth="1.5" strokeDasharray="10 7" />
+                <circle cx="60" cy="60" r="46" stroke="rgba(255,255,255,0.22)" strokeWidth="1" />
+              </svg>
+              <span className="curtain-halo absolute h-24 w-24 rounded-3xl ring-2 ring-[#A3E635]/45" />
+              <div className="animate-remotion-logo relative h-20 w-20 overflow-hidden rounded-2xl bg-white/10 p-1 ring-1 ring-white/30 shadow-2xl">
                 <img
                   src={withBasePath("/icon-madrasah.jpg")}
                   alt=""
@@ -84,10 +92,13 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
               </div>
             </div>
 
-            <div className="overflow-hidden space-y-1.5">
+            <div className="overflow-hidden space-y-2">
               <p className="curtain-title text-3xl font-extrabold tracking-tight text-white">
                 E-Rekap
               </p>
+              <div className="mx-auto h-0.5 w-28 overflow-hidden rounded-full bg-white/15">
+                <div className="animate-remotion-bar h-full w-full bg-[#A3E635]" />
+              </div>
               <p className="curtain-sub font-num text-[11px] font-bold tracking-[0.24em] uppercase text-[#A3E635]">
                 {subtitle}
               </p>
