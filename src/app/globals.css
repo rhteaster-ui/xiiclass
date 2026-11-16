@@ -159,6 +159,71 @@ body {
   }
 }
 
+@keyframes curtainEnter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes curtainLeave {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-28px);
+  }
+}
+
+@keyframes curtainHalo {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.45;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes curtainTextUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.curtain-enter {
+  animation: curtainEnter 280ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.curtain-leave {
+  animation: curtainLeave 320ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.curtain-halo {
+  animation: curtainHalo 1.2s ease-in-out infinite;
+}
+
+.curtain-title {
+  animation: curtainTextUp 340ms cubic-bezier(0.22, 1, 0.36, 1) 90ms both;
+}
+
+.curtain-sub {
+  animation: curtainTextUp 340ms cubic-bezier(0.22, 1, 0.36, 1) 170ms both;
+}
+
 .animate-splash-exit {
   animation: splashExit 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }

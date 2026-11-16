@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { TransitionProvider } from "@/components/TransitionProvider";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -42,7 +43,9 @@ export default function RootLayout({
       lang="id"
       className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+      <body className="min-h-full flex flex-col antialiased">
+        <TransitionProvider>{children}</TransitionProvider>
+      </body>
     </html>
   );
 }

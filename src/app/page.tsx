@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   ArrowUpRight,
   Table,
@@ -15,6 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import { SplashScreen } from "@/components/SplashScreen";
 import { AmbientBackdrop } from "@/components/AmbientBackdrop";
+import { useCurtainNavigation } from "@/components/TransitionProvider";
 import { withBasePath } from "@/lib/paths";
 
 interface LiveSummary {
@@ -26,8 +26,7 @@ interface LiveSummary {
 }
 
 export default function LandingPage() {
-  const router = useRouter();
-  const [exiting, setExiting] = useState(false);
+  const { navigateWithCurtain } = useCurtainNavigation();
   const [stats, setStats] = useState<LiveSummary>({
     attendanceRate: 94.7,
     totalStudents: 18,
@@ -53,26 +52,15 @@ export default function LandingPage() {
       .catch(() => {});
   }, []);
 
-  const navigateWithTransition = (href: string) => {
-    setExiting(true);
-    setTimeout(() => {
-      router.push(href);
-    }, 260);
-  };
-
   return (
     <>
       <SplashScreen />
 
-      <div
-        className={`relative min-h-screen flex flex-col bg-[var(--bg)] text-[var(--ink)] overflow-x-hidden ${
-          exiting ? "animate-page-exit pointer-events-none" : ""
-        }`}
-      >
+      <div className="relative min-h-screen flex flex-col bg-[var(--bg)] text-[var(--ink)] overflow-x-hidden">
         <AmbientBackdrop variant="light" />
 
         {/* Sticky Top Navbar */}
-        <header className="relative z-20 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+        <header className="relative z-20 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between animate-cascade">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl p-0.5 bg-gradient-to-br from-[#115737] to-[#072919] shadow-md">
               <img
@@ -99,23 +87,23 @@ export default function LandingPage() {
             </a>
             <button
               type="button"
-              onClick={() => navigateWithTransition("/rekap")}
+              onClick={() => navigateWithCurtain("/rekap", "MEMBUKA TABEL REKAP")}
               className="hover:text-[var(--canopy)] transition-colors"
             >
               Tabel Rekap
             </button>
             <button
               type="button"
-              onClick={() => navigateWithTransition("/info")}
+              onClick={() => navigateWithCurtain("/info", "MEMBUKA INFO APP")}
               className="hover:text-[var(--canopy)] transition-colors"
             >
-              Info Sekolah
+              Tentang App
             </button>
           </nav>
 
           <button
             type="button"
-            onClick={() => navigateWithTransition("/dashboard")}
+            onClick={() => navigateWithCurtain("/dashboard", "MEMBUKA DASHBOARD")}
             className="btn-tactile inline-flex items-center gap-1.5 rounded-full bg-[#0A3D26] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[#A3E635] shadow-md hover:bg-[#072919]"
           >
             <span>Buka App</span>
@@ -123,33 +111,45 @@ export default function LandingPage() {
           </button>
         </header>
 
-        {/* Hero Section (Fits in First Viewport) */}
+        {/* Hero Section with Staggered Cascade */}
         <section className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-6 pb-12 text-center">
-          <div className="mx-auto max-w-3xl space-y-6 animate-cascade">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-xs font-extrabold text-[var(--canopy)] shadow-sm ring-1 ring-[var(--border-strong)]">
+          <div className="mx-auto max-w-3xl space-y-6">
+            <div
+              className="animate-cascade inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-xs font-extrabold text-[var(--canopy)] shadow-sm ring-1 ring-[var(--border-strong)]"
+              style={{ animationDelay: "40ms" }}
+            >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
               </span>
-              <span>
+              <span className="font-num">
                 TA {stats.academicYear} • Semester {stats.semester}
               </span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.08]">
+            <h1
+              className="animate-cascade text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.08]"
+              style={{ animationDelay: "100ms" }}
+            >
               Rekap Kehadiran Siswa{" "}
               <span className="text-[#0F5132]">Lebih Presisi.</span>
             </h1>
 
-            <p className="mx-auto max-w-xl text-base sm:text-lg text-[var(--ink-muted)] leading-relaxed">
-              Pantau persentase kehadiran per kelas secara terbuka, kelola data rekap oleh Admin, dan cetak laporan standar sekolah dalam satu ketukan.
+            <p
+              className="animate-cascade mx-auto max-w-xl text-base sm:text-lg text-[var(--ink-muted)] leading-relaxed"
+              style={{ animationDelay: "160ms" }}
+            >
+              Pantau persentase kehadiran per kelas secara terbuka, kelola data rekap & backup Excel oleh Admin, dan cetak laporan standar sekolah dalam satu ketukan.
             </p>
 
             {/* Primary & Secondary CTAs */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+            <div
+              className="animate-cascade flex flex-wrap items-center justify-center gap-3 pt-1"
+              style={{ animationDelay: "220ms" }}
+            >
               <button
                 type="button"
-                onClick={() => navigateWithTransition("/dashboard")}
+                onClick={() => navigateWithCurtain("/dashboard", "MEMBUKA DASHBOARD")}
                 className="btn-tactile inline-flex items-center gap-2 rounded-full bg-[#A3E635] px-6 py-3.5 text-sm font-extrabold text-[#072919] shadow-[0_12px_26px_-6px_rgba(163,230,53,0.65)] hover:bg-[#BEF264]"
               >
                 <span>Masuk ke Dashboard</span>
@@ -158,7 +158,7 @@ export default function LandingPage() {
 
               <button
                 type="button"
-                onClick={() => navigateWithTransition("/rekap")}
+                onClick={() => navigateWithCurtain("/rekap", "MEMBUKA TABEL REKAP")}
                 className="btn-tactile inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-sm ring-1 ring-[var(--border-strong)] hover:bg-[var(--surface-raised)]"
               >
                 <Table size={18} weight="bold" className="text-[var(--canopy)]" />
@@ -167,7 +167,7 @@ export default function LandingPage() {
             </div>
 
             {/* Floating Live Snapshot Strip */}
-            <div className="pt-4">
+            <div className="animate-cascade pt-4" style={{ animationDelay: "280ms" }}>
               <div className="mx-auto max-w-2xl sheet-overlap rounded-3xl p-4 sm:p-5 grid grid-cols-3 gap-3 text-left">
                 <div className="rounded-2xl bg-[var(--bg)] p-3 sm:p-4">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-muted)]">
@@ -208,26 +208,34 @@ export default function LandingPage() {
                 title: "Multi-Kelas Terpadu",
                 desc: "Ringkasan kehadiran per kelas dengan persentase dan bar komposisi otomatis.",
                 icon: UsersThree,
+                delay: "320ms",
               },
               {
                 title: "Review & Admin",
                 desc: "Siswa dan guru bebas memantau rekap; edit data terkunci aman untuk Admin.",
                 icon: ShieldCheck,
+                delay: "370ms",
               },
               {
                 title: "Cetak A4 Formal",
                 desc: "Layout A4 Landscape siap cetak lengkap dengan Kop Surat resmi lembaga.",
                 icon: Printer,
+                delay: "420ms",
               },
               {
-                title: "Ekspor Excel",
-                desc: "Unduh laporan rekap bulanan dalam format spreadsheet .xlsx sekali klik.",
+                title: "Backup & Ekspor XLSX",
+                desc: "Ekspor laporan dan impor ulang backup spreadsheet .xlsx langsung dari Admin.",
                 icon: FileXls,
+                delay: "470ms",
               },
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="card-pro rounded-3xl p-5 space-y-3">
+                <div
+                  key={item.title}
+                  style={{ animationDelay: item.delay }}
+                  className="animate-cascade card-pro rounded-3xl p-5 space-y-3"
+                >
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--surface-mint)] text-[var(--canopy)]">
                     <Icon size={22} weight="fill" />
                   </span>
@@ -241,7 +249,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Deep Forest Showcase Banner (Growify Dark Green Band) */}
+        {/* Deep Forest Showcase Banner */}
         <section className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 pb-12">
           <div className="relative overflow-hidden rounded-3xl bg-[#0A3D26] p-6 sm:p-9 text-white shadow-[0_20px_45px_-14px_rgba(7,41,25,0.45)]">
             <AmbientBackdrop variant="canopy" />
@@ -262,7 +270,7 @@ export default function LandingPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => navigateWithTransition("/dashboard")}
+                  onClick={() => navigateWithCurtain("/dashboard", "MEMBUKA DASHBOARD")}
                   className="btn-tactile inline-flex items-center gap-2 rounded-full bg-[#A3E635] px-5 py-3 text-sm font-extrabold text-[#072919] shadow-md hover:bg-[#BEF264]"
                 >
                   <span>Mulai Jelajahi Dashboard</span>
@@ -273,7 +281,7 @@ export default function LandingPage() {
                   className="btn-tactile inline-flex items-center gap-2 rounded-full bg-white/12 px-5 py-3 text-sm font-bold text-white ring-1 ring-white/20 hover:bg-white/20"
                 >
                   <Buildings size={17} weight="bold" />
-                  <span>Profil Sekolah</span>
+                  <span>Tentang App & Dev</span>
                 </Link>
               </div>
             </div>
@@ -292,7 +300,7 @@ export default function LandingPage() {
                 rel="noreferrer"
                 className="font-bold text-[var(--canopy)] hover:underline"
               >
-                RHMT OFC
+                R_HMT OFC
               </a>
             </span>
           </div>
