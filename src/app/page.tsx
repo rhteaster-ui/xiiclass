@@ -25,7 +25,7 @@ interface LiveSummary {
   semester: string;
 }
 
-const TYPED_PHRASES = ["Lebih Transparan."];
+const TYPED_PHRASES = ["Lebih Presisi.", "Lebih Transparan.", "Siap Cetak A4."];
 
 function TypewriterHeading() {
   const [phraseIdx, setPhraseIdx] = useState(0);
@@ -34,7 +34,7 @@ function TypewriterHeading() {
 
   useEffect(() => {
     const current = TYPED_PHRASES[phraseIdx];
-    const delay = deleting ? 55 : charIdx === current.length ? 3500 : 115;
+    const delay = deleting ? 45 : charIdx === current.length ? 1800 : 80;
     const t = setTimeout(() => {
       if (!deleting) {
         if (charIdx < current.length) {
