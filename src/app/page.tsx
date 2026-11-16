@@ -8,10 +8,13 @@ import {
   EnvelopeSimple,
   WarningCircle,
   UsersThree,
-  ArrowRight,
+  ArrowUpRight,
   CalendarBlank,
   ArrowClockwise,
-  CaretRight,
+  GraduationCap,
+  BookOpenText,
+  ChalkboardTeacher,
+  SquaresFour,
 } from "@phosphor-icons/react";
 import { AppShell } from "@/components/AppShell";
 import { withBasePath } from "@/lib/paths";
@@ -73,7 +76,7 @@ function AttendanceRing({ rate }: { rate: number }) {
           cy="42"
           r={radius}
           fill="none"
-          stroke="#6EE7B7"
+          stroke="#A3E635"
           strokeWidth="7"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -85,13 +88,15 @@ function AttendanceRing({ rate }: { rate: number }) {
         <span className="font-num text-lg font-extrabold text-white leading-none">
           {clamped}%
         </span>
-        <span className="mt-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-100/80">
+        <span className="mt-0.5 text-[9px] font-bold uppercase tracking-wider text-lime-200/90">
           Hadir
         </span>
       </div>
     </div>
   );
 }
+
+const CLASS_ICONS = [GraduationCap, BookOpenText, ChalkboardTeacher];
 
 export default function DashboardPage() {
   const [period, setPeriod] = useState(() => new Date().toISOString().slice(0, 7));
@@ -105,7 +110,9 @@ export default function DashboardPage() {
     setError(null);
     try {
       const res = await fetch(
-        withBasePath(`/api/overview?period=${encodeURIComponent(period)}&classId=${encodeURIComponent(classId)}`)
+        withBasePath(
+          `/api/overview?period=${encodeURIComponent(period)}&classId=${encodeURIComponent(classId)}`
+        )
       );
       if (!res.ok) throw new Error("Gagal memuat ringkasan data.");
       const json = (await res.json()) as OverviewData;
@@ -132,357 +139,367 @@ export default function DashboardPage() {
 
   return (
     <AppShell>
-      <div className="space-y-6">
-        {/* Elevated Institutional Banner Hero */}
+      <div className="space-y-5">
+        {/* Deep Forest Canopy Hero (Full-bleed mobile, rounded-3xl desktop) */}
         <section
           aria-label="Ringkasan Sistem"
-          className="relative overflow-hidden rounded-3xl border border-emerald-950/30 shadow-[0_20px_45px_-16px_rgba(10,54,34,0.45)] animate-cascade"
+          className="relative overflow-hidden rounded-b-[32px] lg:rounded-3xl bg-[#0A3D26] text-white shadow-[0_22px_48px_-16px_rgba(7,41,25,0.45)] animate-cascade"
         >
           <img
             src={withBasePath("/banner-madrasah.jpg")}
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover opacity-55"
           />
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-br from-[#072617]/96 via-[#0D442A]/90 to-[#0F5132]/75"
+            className="absolute inset-0 bg-gradient-to-br from-[#072919]/95 via-[#0A3D26]/88 to-[#115737]/72"
           />
-          <div className="relative z-10 flex flex-col gap-5 p-5 sm:p-7 md:flex-row md:items-center md:justify-between text-white">
-            <div className="space-y-2.5 max-w-xl">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1 text-xs font-bold text-emerald-100 ring-1 ring-white/20 backdrop-blur-md">
-                <CalendarBlank size={14} weight="bold" />
-                <span>
-                  {data?.school
-                    ? `TA ${data.school.academic_year} • Semester ${data.school.semester}`
-                    : "Rekapitulasi Kehadiran Resmi"}
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                Dashboard Rekapitulasi
-              </h1>
-              <p className="text-sm text-emerald-50/85 leading-relaxed">
-                Pantau komposisi kehadiran siswa secara langsung, terstruktur per kelas dan periode bulanan.
-              </p>
 
-              {/* Segmented Composition Bar inside Hero */}
-              {totalSessions > 0 && (
-                <div className="pt-1 space-y-1.5">
-                  <div className="flex h-2 w-full overflow-hidden rounded-full bg-black/25 p-0.5 ring-1 ring-white/10">
-                    <div
-                      style={{ width: `${pctOf(data?.summary.total_hadir ?? 0)}%` }}
-                      className="h-full rounded-l-full bg-emerald-400"
-                    />
-                    <div
-                      style={{ width: `${pctOf(data?.summary.total_sakit ?? 0)}%` }}
-                      className="h-full bg-amber-300"
-                    />
-                    <div
-                      style={{ width: `${pctOf(data?.summary.total_izin ?? 0)}%` }}
-                      className="h-full bg-sky-300"
-                    />
-                    <div
-                      style={{ width: `${pctOf(data?.summary.total_alpha ?? 0)}%` }}
-                      className="h-full rounded-r-full bg-rose-400"
-                    />
-                  </div>
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-semibold text-emerald-100/80">
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                      Hadir {pctOf(data?.summary.total_hadir ?? 0)}%
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-amber-300" />
-                      Sakit {pctOf(data?.summary.total_sakit ?? 0)}%
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-sky-300" />
-                      Izin {pctOf(data?.summary.total_izin ?? 0)}%
-                    </span>
-                    <span className="inline-flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-rose-400" />
-                      Alpha {pctOf(data?.summary.total_alpha ?? 0)}%
-                    </span>
-                  </div>
+          <div className="relative z-10 px-5 pt-5 pb-12 sm:px-7 sm:pt-7 sm:pb-14 space-y-6">
+            {/* Top App Row */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="lg:hidden h-9 w-9 rounded-xl bg-white/15 p-0.5 ring-1 ring-white/25">
+                  <img
+                    src={withBasePath("/icon-madrasah.jpg")}
+                    alt="E-Rekap"
+                    width={36}
+                    height={36}
+                    className="h-full w-full rounded-[10px] object-cover"
+                  />
                 </div>
-              )}
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-lime-200/90">
+                    {data?.school
+                      ? `TA ${data.school.academic_year} • ${data.school.semester}`
+                      : "E-Rekap Madrasah"}
+                  </p>
+                  <p className="text-sm font-extrabold text-white lg:hidden">E-Rekap</p>
+                </div>
+              </div>
+
+              <label className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 ring-1 ring-white/20 backdrop-blur-md">
+                <CalendarBlank size={14} weight="bold" className="text-[#A3E635]" />
+                <input
+                  type="month"
+                  value={period}
+                  onChange={(e) => setPeriod(e.target.value)}
+                  aria-label="Pilih Periode Bulan"
+                  className="font-num bg-transparent text-xs font-bold text-white focus:outline-none [color-scheme:dark]"
+                />
+              </label>
             </div>
 
-            <div className="flex items-center justify-between md:justify-end gap-4 rounded-2xl bg-black/20 p-3.5 ring-1 ring-white/15 backdrop-blur-md">
-              <AttendanceRing rate={loading ? 0 : data?.summary.attendance_rate ?? 0} />
-              <div className="space-y-2">
-                <div>
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-100/75">
-                    Siswa Terdata
+            {/* Hero Metric & Action Row */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
+              <div className="space-y-3">
+                <p className="text-xs font-semibold text-emerald-100/80">
+                  Total Persentase Kehadiran
+                </p>
+                <div className="flex items-baseline gap-3">
+                  <h1 className="font-num text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+                    {loading ? "—" : `${data?.summary.attendance_rate ?? 0}%`}
+                  </h1>
+                  <span className="rounded-full bg-white/15 px-2.5 py-0.5 font-num text-xs font-bold text-emerald-100">
+                    {loading ? "..." : `${data?.summary.total_students ?? 0} Siswa`}
+                  </span>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                  <Link
+                    href={`/rekap?period=${encodeURIComponent(period)}&classId=${encodeURIComponent(classId)}`}
+                    className="btn-tactile inline-flex items-center gap-2 rounded-full bg-[#A3E635] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[#072919] shadow-[0_8px_20px_-4px_rgba(163,230,53,0.5)] hover:bg-[#BEF264]"
+                  >
+                    <span>Buka Rekap</span>
+                    <ArrowUpRight size={16} weight="bold" />
+                  </Link>
+                  <Link
+                    href="/info"
+                    className="btn-tactile inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-2.5 text-xs sm:text-sm font-bold text-white ring-1 ring-white/20 backdrop-blur-md hover:bg-white/20"
+                  >
+                    <span>Info Sekolah</span>
+                  </Link>
+                </div>
+              </div>
+
+              <div className="hidden sm:flex items-center gap-4 rounded-2xl bg-black/20 p-3.5 ring-1 ring-white/15 backdrop-blur-md self-start md:self-auto">
+                <AttendanceRing rate={loading ? 0 : data?.summary.attendance_rate ?? 0} />
+                <div className="space-y-1.5 text-xs font-semibold text-emerald-100/90">
+                  <p className="flex items-center justify-between gap-4">
+                    <span>Hadir</span>
+                    <span className="font-num font-bold text-white">{data?.summary.total_hadir ?? 0}</span>
                   </p>
-                  <p className="font-num text-xl font-extrabold text-white">
-                    {loading ? "—" : data?.summary.total_students ?? 0}
+                  <p className="flex items-center justify-between gap-4">
+                    <span>Sakit</span>
+                    <span className="font-num font-bold text-amber-200">{data?.summary.total_sakit ?? 0}</span>
+                  </p>
+                  <p className="flex items-center justify-between gap-4">
+                    <span>Izin</span>
+                    <span className="font-num font-bold text-sky-200">{data?.summary.total_izin ?? 0}</span>
+                  </p>
+                  <p className="flex items-center justify-between gap-4">
+                    <span>Alpha</span>
+                    <span className="font-num font-bold text-rose-200">{data?.summary.total_alpha ?? 0}</span>
                   </p>
                 </div>
-                <Link
-                  href={`/rekap?period=${encodeURIComponent(period)}&classId=${encodeURIComponent(classId)}`}
-                  className="btn-tactile inline-flex items-center gap-2 rounded-xl bg-white px-3.5 py-2 text-xs font-extrabold text-[#0F5132] shadow-md hover:bg-emerald-50"
-                >
-                  <span>Tabel Rekap</span>
-                  <ArrowRight size={14} weight="bold" />
-                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Tactile Segmented Class Filter + Month Picker */}
+        {/* Overlapping White Category Sheet (-mt-8) */}
         <section
-          aria-label="Filter Periode dan Kelas"
-          className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-cascade"
+          aria-label="Pilih Kelas"
+          className="relative z-20 -mt-8 mx-3.5 lg:mx-0 sheet-overlap rounded-3xl p-4 sm:p-5 animate-cascade"
           style={{ animationDelay: "40ms" }}
         >
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar rounded-2xl well-recessed p-1.5">
+          <div className="flex items-center justify-between mb-3.5">
+            <h2 className="text-sm font-extrabold text-[var(--ink)]">Filter Kelas</h2>
+            <span className="font-num text-xs font-bold text-[var(--ink-muted)]">
+              {data ? `${data.classes.length} Kelas Aktif` : "..."}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => setClassId("all")}
-              className={`btn-tactile shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold transition-colors ${
-                classId === "all"
-                  ? "bg-white text-[var(--ink)] shadow-sm ring-1 ring-black/5"
-                  : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
-              }`}
+              className="btn-tactile flex flex-col items-center gap-2 group"
             >
-              Semua Kelas
+              <span
+                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all ${
+                  classId === "all"
+                    ? "bg-[#0A3D26] text-[#A3E635] ring-4 ring-[#A3E635]/30 shadow-md"
+                    : "bg-[var(--surface-mint)] text-[var(--canopy)] group-hover:bg-[#d7efe0]"
+                }`}
+              >
+                <SquaresFour size={22} weight={classId === "all" ? "fill" : "regular"} />
+              </span>
+              <span
+                className={`text-xs font-bold truncate max-w-full ${
+                  classId === "all" ? "text-[var(--canopy)]" : "text-[var(--ink-muted)]"
+                }`}
+              >
+                Semua
+              </span>
             </button>
-            {data?.classes.map((cls) => {
+
+            {data?.classes.map((cls, idx) => {
               const active = classId === String(cls.id);
+              const Icon = CLASS_ICONS[idx % CLASS_ICONS.length];
               return (
                 <button
                   key={cls.id}
                   type="button"
                   onClick={() => setClassId(String(cls.id))}
-                  className={`btn-tactile shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold transition-colors ${
-                    active
-                      ? "bg-white text-[var(--accent)] shadow-sm ring-1 ring-emerald-900/10"
-                      : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
-                  }`}
+                  className="btn-tactile flex flex-col items-center gap-2 group"
                 >
-                  {cls.name}
+                  <span
+                    className={`flex h-12 w-12 items-center justify-center rounded-full transition-all ${
+                      active
+                        ? "bg-[#0A3D26] text-[#A3E635] ring-4 ring-[#A3E635]/30 shadow-md"
+                        : "bg-[var(--surface-mint)] text-[var(--canopy)] group-hover:bg-[#d7efe0]"
+                    }`}
+                  >
+                    <Icon size={22} weight={active ? "fill" : "regular"} />
+                  </span>
+                  <span
+                    className={`text-xs font-bold truncate max-w-full ${
+                      active ? "text-[var(--canopy)]" : "text-[var(--ink-muted)]"
+                    }`}
+                  >
+                    {cls.name}
+                  </span>
                 </button>
               );
             })}
           </div>
-
-          <div className="flex items-center justify-between sm:justify-end gap-2 rounded-2xl card-elevated px-3.5 py-2">
-            <span className="text-xs font-bold text-[var(--ink-muted)]">Periode</span>
-            <input
-              type="month"
-              value={period}
-              onChange={(e) => setPeriod(e.target.value)}
-              aria-label="Pilih Periode Bulan"
-              className="font-num bg-transparent text-sm font-bold text-[var(--ink)] focus:outline-none"
-            />
-          </div>
         </section>
 
-        {/* Error State */}
-        {error && (
-          <div
-            role="alert"
-            className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-red-900"
-          >
-            <div className="flex items-center gap-2.5 text-sm font-medium">
-              <WarningCircle size={20} weight="fill" className="text-red-700 shrink-0" />
-              <span>{error}</span>
-            </div>
-            <button
-              type="button"
-              onClick={loadOverview}
-              className="btn-tactile inline-flex items-center gap-1.5 rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white"
+        <div className="px-3.5 lg:px-0 space-y-6">
+          {/* Error State */}
+          {error && (
+            <div
+              role="alert"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-red-900"
             >
-              <ArrowClockwise size={14} />
-              <span>Coba Lagi</span>
-            </button>
-          </div>
-        )}
-
-        {/* Tactile KPI Grid */}
-        <section aria-label="Metrik Kehadiran" className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
-          {[
-            {
-              label: "Total Hadir",
-              code: "H",
-              value: data?.summary.total_hadir ?? 0,
-              icon: CheckCircle,
-              wellBg: "bg-[var(--status-hadir-bg)]",
-              fg: "text-[var(--status-hadir-fg)]",
-              barColor: "bg-emerald-600",
-              delay: "80ms",
-            },
-            {
-              label: "Total Sakit",
-              code: "S",
-              value: data?.summary.total_sakit ?? 0,
-              icon: FirstAidKit,
-              wellBg: "bg-[var(--status-sakit-bg)]",
-              fg: "text-[var(--status-sakit-fg)]",
-              barColor: "bg-amber-500",
-              delay: "120ms",
-            },
-            {
-              label: "Total Izin",
-              code: "I",
-              value: data?.summary.total_izin ?? 0,
-              icon: EnvelopeSimple,
-              wellBg: "bg-[var(--status-izin-bg)]",
-              fg: "text-[var(--status-izin-fg)]",
-              barColor: "bg-sky-600",
-              delay: "160ms",
-            },
-            {
-              label: "Total Alpha",
-              code: "A",
-              value: data?.summary.total_alpha ?? 0,
-              icon: WarningCircle,
-              wellBg: "bg-[var(--status-alpha-bg)]",
-              fg: "text-[var(--status-alpha-fg)]",
-              barColor: "bg-rose-600",
-              delay: "200ms",
-            },
-          ].map((item) => {
-            const Icon = item.icon;
-            const share = pctOf(item.value);
-            return (
-              <div
-                key={item.label}
-                style={{ animationDelay: item.delay }}
-                className="animate-cascade card-elevated card-elevated-interactive rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-3"
+              <div className="flex items-center gap-2.5 text-sm font-medium">
+                <WarningCircle size={20} weight="fill" className="text-red-700 shrink-0" />
+                <span>{error}</span>
+              </div>
+              <button
+                type="button"
+                onClick={loadOverview}
+                className="btn-tactile inline-flex items-center gap-1.5 rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white"
               >
-                <div className="flex items-start justify-between gap-2">
-                  <div>
+                <ArrowClockwise size={14} />
+                <span>Coba Lagi</span>
+              </button>
+            </div>
+          )}
+
+          {/* 4 Metric Cards */}
+          <section aria-label="Metrik Kehadiran" className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+            {[
+              {
+                label: "Hadir",
+                value: data?.summary.total_hadir ?? 0,
+                icon: CheckCircle,
+                bg: "bg-[var(--status-hadir-bg)]",
+                fg: "text-[var(--status-hadir-fg)]",
+                bar: "bg-[#15803D]",
+              },
+              {
+                label: "Sakit",
+                value: data?.summary.total_sakit ?? 0,
+                icon: FirstAidKit,
+                bg: "bg-[var(--status-sakit-bg)]",
+                fg: "text-[var(--status-sakit-fg)]",
+                bar: "bg-amber-500",
+              },
+              {
+                label: "Izin",
+                value: data?.summary.total_izin ?? 0,
+                icon: EnvelopeSimple,
+                bg: "bg-[var(--status-izin-bg)]",
+                fg: "text-[var(--status-izin-fg)]",
+                bar: "bg-sky-600",
+              },
+              {
+                label: "Alpha",
+                value: data?.summary.total_alpha ?? 0,
+                icon: WarningCircle,
+                bg: "bg-[var(--status-alpha-bg)]",
+                fg: "text-[var(--status-alpha-fg)]",
+                bar: "bg-rose-600",
+              },
+            ].map((item) => {
+              const Icon = item.icon;
+              const share = pctOf(item.value);
+              return (
+                <div
+                  key={item.label}
+                  className="card-pro rounded-2xl p-4 flex flex-col justify-between gap-3"
+                >
+                  <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-[var(--ink-muted)]">
                       {item.label}
                     </span>
-                    <p className="mt-1 font-num text-2xl sm:text-3xl font-extrabold tracking-tight text-[var(--ink)]">
-                      {loading ? (
-                        <span className="inline-block h-8 w-14 animate-pulse rounded-lg bg-[var(--surface-recessed)]" />
-                      ) : (
-                        item.value.toLocaleString("id-ID")
-                      )}
+                    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${item.bg} ${item.fg}`}>
+                      <Icon size={17} weight="fill" />
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between gap-2">
+                    <p className="font-num text-2xl font-extrabold text-[var(--ink)]">
+                      {loading ? "—" : item.value.toLocaleString("id-ID")}
                     </p>
+                    <span className={`font-num text-xs font-extrabold ${item.fg}`}>
+                      {share}%
+                    </span>
                   </div>
-                  <span
-                    className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${item.wellBg} ${item.fg} shadow-inner`}
-                  >
-                    <Icon size={20} weight="fill" />
-                  </span>
-                </div>
-
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] font-bold">
-                    <span className="text-[var(--ink-muted)]">Porsi {item.code}</span>
-                    <span className={`font-num ${item.fg}`}>{share}%</span>
-                  </div>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full well-recessed">
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg)]">
                     <div
                       style={{ width: `${Math.min(100, share)}%` }}
-                      className={`h-full rounded-full ${item.barColor}`}
+                      className={`h-full rounded-full ${item.bar}`}
                     />
                   </div>
                 </div>
+              );
+            })}
+          </section>
+
+          {/* Class Breakdown Cards (Ref-2 Right Screen Architecture) */}
+          <section aria-label="Ringkasan Per Kelas" className="space-y-3.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <UsersThree size={20} weight="fill" className="text-[var(--canopy)]" />
+                <h2 className="text-base font-extrabold text-[var(--ink)]">
+                  Ringkasan Per Kelas
+                </h2>
               </div>
-            );
-          })}
-        </section>
-
-        {/* Per-Class Summary Cards (Mobile) & Ledger Table (Desktop) */}
-        <section
-          aria-label="Rekapitulasi Per Kelas"
-          style={{ animationDelay: "240ms" }}
-          className="animate-cascade space-y-3"
-        >
-          <div className="flex items-center justify-between px-1">
-            <div className="flex items-center gap-2">
-              <UsersThree size={20} weight="fill" className="text-[var(--accent)]" />
-              <h2 className="text-base font-extrabold tracking-tight text-[var(--ink)]">
-                Ringkasan Per Kelas
-              </h2>
+              <Link
+                href="/rekap"
+                className="text-xs font-bold text-[var(--canopy)] hover:underline underline-offset-4"
+              >
+                Lihat Semua
+              </Link>
             </div>
-            <span className="font-num rounded-full well-recessed px-3 py-1 text-xs font-bold text-[var(--ink-muted)]">
-              {data ? `${data.classes.length} Kelas` : "Memuat..."}
-            </span>
-          </div>
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-28 w-full animate-pulse rounded-2xl card-elevated" />
-              ))}
-            </div>
-          ) : !data || data.classBreakdown.length === 0 ? (
-            <div className="card-elevated rounded-2xl p-8 text-center text-sm text-[var(--ink-muted)]">
-              Belum ada data kelas terdaftar. Admin dapat menambahkan kelas melalui menu Kelola.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-              {data.classBreakdown.map((row) => {
-                const total = row.hadir + row.sakit + row.izin + row.alpha;
-                const rate = total > 0 ? Math.round((row.hadir / total) * 1000) / 10 : 0;
-                return (
-                  <Link
-                    key={row.id}
-                    href={`/rekap?classId=${row.id}&period=${encodeURIComponent(period)}`}
-                    className="card-elevated card-elevated-interactive rounded-2xl p-4 sm:p-5 flex flex-col justify-between gap-4 group"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="text-base font-extrabold text-[var(--ink)] group-hover:text-[var(--accent)] transition-colors">
-                          {row.name}
-                        </p>
-                        <p className="text-xs font-medium text-[var(--ink-muted)]">
-                          Wali: {row.homeroom_teacher}
-                        </p>
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-36 animate-pulse rounded-3xl card-pro" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {data?.classBreakdown.map((row) => {
+                  const total = row.hadir + row.sakit + row.izin + row.alpha;
+                  const rate = total > 0 ? Math.round((row.hadir / total) * 1000) / 10 : 0;
+                  return (
+                    <Link
+                      key={row.id}
+                      href={`/rekap?classId=${row.id}&period=${encodeURIComponent(period)}`}
+                      className="card-pro rounded-3xl p-5 flex flex-col justify-between gap-4 group"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <h3 className="text-base font-extrabold text-[var(--ink)] group-hover:text-[var(--canopy)] transition-colors">
+                            {row.name}
+                          </h3>
+                          <p className="text-xs font-medium text-[var(--ink-muted)]">
+                            {row.total_students} Siswa • {row.homeroom_teacher}
+                          </p>
+                        </div>
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[var(--ink)] group-hover:bg-[#0A3D26] group-hover:text-[#A3E635] transition-colors">
+                          <ArrowUpRight size={16} weight="bold" />
+                        </span>
                       </div>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-[var(--accent-soft)] px-2.5 py-1 font-num text-xs font-extrabold text-[var(--accent)]">
-                        {rate}%
-                        <CaretRight size={12} weight="bold" />
-                      </span>
-                    </div>
 
-                    <div className="grid grid-cols-4 gap-1.5 text-center">
-                      <div className="rounded-xl bg-[var(--status-hadir-bg)] py-1.5">
-                        <p className="text-[10px] font-bold text-[var(--status-hadir-fg)]">H</p>
-                        <p className="font-num text-sm font-extrabold text-[var(--status-hadir-fg)]">
-                          {row.hadir}
-                        </p>
+                      <div className="grid grid-cols-4 gap-2 text-left">
+                        <div>
+                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Hadir</p>
+                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.hadir}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Sakit</p>
+                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.sakit}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Izin</p>
+                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.izin}</p>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Alpha</p>
+                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.alpha}</p>
+                        </div>
                       </div>
-                      <div className="rounded-xl bg-[var(--status-sakit-bg)] py-1.5">
-                        <p className="text-[10px] font-bold text-[var(--status-sakit-fg)]">S</p>
-                        <p className="font-num text-sm font-extrabold text-[var(--status-sakit-fg)]">
-                          {row.sakit}
-                        </p>
-                      </div>
-                      <div className="rounded-xl bg-[var(--status-izin-bg)] py-1.5">
-                        <p className="text-[10px] font-bold text-[var(--status-izin-fg)]">I</p>
-                        <p className="font-num text-sm font-extrabold text-[var(--status-izin-fg)]">
-                          {row.izin}
-                        </p>
-                      </div>
-                      <div className="rounded-xl bg-[var(--status-alpha-bg)] py-1.5">
-                        <p className="text-[10px] font-bold text-[var(--status-alpha-fg)]">A</p>
-                        <p className="font-num text-sm font-extrabold text-[var(--status-alpha-fg)]">
-                          {row.alpha}
-                        </p>
-                      </div>
-                    </div>
 
-                    <div className="flex items-center justify-between text-xs font-semibold text-[var(--ink-muted)] pt-1 border-t border-[var(--border)]">
-                      <span>Jumlah Siswa</span>
-                      <span className="font-num font-bold text-[var(--ink)]">
-                        {row.total_students} Siswa
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </section>
+                      {/* Thick Progress Bar + Dark Obsidian Percentage Pill */}
+                      <div className="space-y-2">
+                        <div className="h-2.5 w-full overflow-hidden rounded-full bg-[var(--bg)]">
+                          <div
+                            style={{ width: `${Math.min(100, rate)}%` }}
+                            className="h-full rounded-full bg-gradient-to-r from-[#115737] to-[#84CC16]"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-semibold text-[var(--ink-muted)]">
+                            Kehadiran
+                          </span>
+                          <span className="font-num rounded-full bg-[#0B1410] px-2.5 py-0.5 text-[11px] font-extrabold text-white">
+                            {rate}%
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </AppShell>
   );

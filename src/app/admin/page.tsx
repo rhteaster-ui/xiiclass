@@ -344,7 +344,7 @@ export default function AdminPage() {
           Memeriksa sesi Admin...
         </div>
       ) : !authenticated ? (
-        <div className="mx-auto max-w-md py-6 animate-cascade">
+        <div className="mx-auto max-w-md px-4 py-8 animate-cascade">
           <div className="rounded-2xl bg-[var(--surface)] p-6 sm:p-7 border border-[var(--border)] shadow-[var(--shadow-tactile)] space-y-5">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]">
@@ -410,7 +410,7 @@ export default function AdminPage() {
           </div>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="px-3.5 lg:px-0 py-5 lg:py-0 space-y-6">
           {/* Admin Top Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-cascade">
             <div className="flex items-center gap-3">

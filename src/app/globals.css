@@ -1,20 +1,20 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #ebefec;
-  --bg-mesh: radial-gradient(1100px 520px at 85% -10%, rgba(15, 81, 50, 0.09), transparent 60%),
-    radial-gradient(800px 420px at 5% 10%, rgba(16, 185, 129, 0.06), transparent 55%);
+  --bg: #f1f5f2;
   --surface: #ffffff;
-  --surface-raised: #f7f9f8;
-  --surface-recessed: #e6ebe7;
-  --ink: #0c1410;
-  --ink-muted: #475569;
-  --border: rgba(15, 23, 42, 0.08);
-  --border-strong: rgba(15, 23, 42, 0.14);
-  --accent: #0f5132;
-  --accent-bright: #15803d;
-  --accent-hover: #0a3c24;
-  --accent-soft: #e3f2ea;
+  --surface-raised: #f8fbf9;
+  --surface-mint: #eaf6ee;
+  --ink: #0b1410;
+  --ink-muted: #526058;
+  --border: rgba(10, 61, 38, 0.08);
+  --border-strong: rgba(10, 61, 38, 0.15);
+  --canopy: #0a3d26;
+  --canopy-deep: #072919;
+  --canopy-mid: #115737;
+  --lime: #a3e635;
+  --lime-hover: #bef264;
+  --lime-ink: #072919;
   --status-hadir-bg: #dcfce7;
   --status-hadir-fg: #14532d;
   --status-sakit-bg: #fef3c7;
@@ -23,16 +23,12 @@
   --status-izin-fg: #075985;
   --status-alpha-bg: #fee2e2;
   --status-alpha-fg: #991b1b;
-  --shadow-card: inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 1px 2px rgba(12, 20, 16, 0.06),
-    0 12px 28px -12px rgba(15, 81, 50, 0.14);
-  --shadow-card-hover: inset 0 1px 0 rgba(255, 255, 255, 1),
-    0 4px 10px rgba(12, 20, 16, 0.08),
-    0 20px 36px -14px rgba(15, 81, 50, 0.18);
-  --shadow-dock: inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 16px 38px -8px rgba(12, 20, 16, 0.38),
-    0 4px 12px rgba(12, 20, 16, 0.22);
-  --shadow-recessed: inset 0 1px 3px rgba(12, 20, 16, 0.08);
+  --shadow-sheet: 0 18px 40px -14px rgba(10, 61, 38, 0.16),
+    0 2px 8px rgba(10, 61, 38, 0.06);
+  --shadow-card: 0 10px 26px -12px rgba(10, 61, 38, 0.12),
+    0 1px 3px rgba(10, 61, 38, 0.05);
+  --shadow-dock: 0 18px 36px -8px rgba(7, 41, 25, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
 }
 
 @theme inline {
@@ -45,8 +41,6 @@
 html,
 body {
   background-color: var(--bg);
-  background-image: var(--bg-mesh);
-  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--font-sans-base), system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -57,7 +51,13 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-.card-elevated {
+.sheet-overlap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sheet);
+}
+
+.card-pro {
   background: var(--surface);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
@@ -65,17 +65,11 @@ body {
     box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.card-elevated-interactive:hover {
+.card-pro:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-card-hover);
+  box-shadow: var(--shadow-sheet);
 }
 
-.well-recessed {
-  background: var(--surface-recessed);
-  box-shadow: var(--shadow-recessed);
-}
-
-/* Tactile mechanical interaction */
 .btn-tactile {
   transition: transform 140ms cubic-bezier(0.22, 1, 0.36, 1),
     background-color 140ms ease,
@@ -90,7 +84,6 @@ body {
   transform: translateY(1px) scale(0.98);
 }
 
-/* Hide scrollbars on horizontal pill rails */
 .no-scrollbar {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -100,7 +93,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--canopy);
   outline-offset: 2px;
 }
 
@@ -136,7 +129,7 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .btn-tactile,
-  .card-elevated,
+  .card-pro,
   .animate-splash-exit,
   .animate-cascade {
     animation: none !important;
@@ -145,7 +138,6 @@ body {
   }
 }
 
-/* Formal A4 Landscape Print Styles (No Signature Block) */
 @media print {
   @page {
     size: A4 landscape;
@@ -154,7 +146,6 @@ body {
 
   body {
     background: #ffffff !important;
-    background-image: none !important;
     color: #000000 !important;
     font-size: 11px !important;
   }

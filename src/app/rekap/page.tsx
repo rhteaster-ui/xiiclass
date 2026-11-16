@@ -10,6 +10,7 @@ import {
   ArrowsDownUp,
   WarningCircle,
   ArrowClockwise,
+  CalendarBlank,
 } from "@phosphor-icons/react";
 import { AppShell } from "@/components/AppShell";
 import { withBasePath } from "@/lib/paths";
@@ -182,46 +183,48 @@ function RekapContent() {
           </p>
         </div>
 
-        {/* Screen Header & Action Controls */}
-        <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between animate-cascade">
-          <div>
-            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--ink)]">
-              Rekapitulasi Kehadiran
-            </h1>
-            <p className="text-sm text-[var(--ink-muted)]">
-              Data resmi terverifikasi — siap cetak A4 dan ekspor spreadsheet.
-            </p>
-          </div>
+        {/* Canopy Header */}
+        <section className="no-print relative overflow-hidden rounded-b-[28px] lg:rounded-3xl bg-[#0A3D26] px-5 pt-5 pb-11 sm:px-7 sm:pt-7 sm:pb-12 text-white shadow-[0_18px_40px_-14px_rgba(7,41,25,0.45)] animate-cascade">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-lime-200/90">
+                Data Resmi Terverifikasi
+              </p>
+              <h1 className="text-2xl font-extrabold tracking-tight text-white">
+                Rekapitulasi Kehadiran
+              </h1>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <button
-              type="button"
-              onClick={handleExportExcel}
-              disabled={sortedRows.length === 0}
-              className="btn-tactile inline-flex items-center gap-2 rounded-xl card-elevated px-4 py-2.5 text-sm font-bold text-[var(--ink)] disabled:opacity-50"
-            >
-              <FileXls size={18} weight="bold" className="text-[var(--accent)]" />
-              <span>Ekspor Excel</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => window.print()}
-              disabled={sortedRows.length === 0}
-              className="btn-tactile inline-flex items-center gap-2 rounded-xl bg-[#0F5132] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(15,81,50,0.55)] hover:bg-[var(--accent-hover)] disabled:opacity-50"
-            >
-              <Printer size={18} weight="bold" />
-              <span>Cetak A4</span>
-            </button>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                disabled={sortedRows.length === 0}
+                className="btn-tactile inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-2 text-xs sm:text-sm font-bold text-white ring-1 ring-white/20 backdrop-blur-md hover:bg-white/20 disabled:opacity-50"
+              >
+                <FileXls size={17} weight="bold" className="text-[#A3E635]" />
+                <span>Ekspor Excel</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                disabled={sortedRows.length === 0}
+                className="btn-tactile inline-flex items-center gap-2 rounded-full bg-[#A3E635] px-4 py-2 text-xs sm:text-sm font-extrabold text-[#072919] shadow-md hover:bg-[#BEF264] disabled:opacity-50"
+              >
+                <Printer size={17} weight="bold" />
+                <span>Cetak A4</span>
+              </button>
+            </div>
           </div>
-        </div>
+        </section>
 
-        {/* Search + Pill Filters */}
+        {/* Overlapping Search & Filter Sheet */}
         <section
           aria-label="Filter Rekap"
-          className="no-print space-y-3 animate-cascade"
+          className="no-print relative z-20 -mt-8 mx-3.5 lg:mx-0 sheet-overlap rounded-3xl p-4 space-y-3 animate-cascade"
           style={{ animationDelay: "40ms" }}
         >
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <div className="relative sm:col-span-2">
               <MagnifyingGlass
                 size={18}
@@ -234,30 +237,33 @@ function RekapContent() {
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Cari nama siswa atau NIS/NISN..."
                 aria-label="Cari nama atau NIS"
-                className="w-full rounded-2xl card-elevated pl-10 pr-4 py-2.5 text-sm font-medium text-[var(--ink)] min-h-[44px]"
+                className="w-full rounded-2xl bg-[var(--bg)] pl-10 pr-4 py-2.5 text-sm font-medium text-[var(--ink)] min-h-[42px]"
               />
             </div>
 
-            <div className="flex items-center justify-between gap-2 rounded-2xl card-elevated px-3.5 py-2 min-h-[44px]">
-              <span className="text-xs font-bold text-[var(--ink-muted)]">Periode</span>
+            <label className="flex items-center justify-between gap-2 rounded-2xl bg-[var(--bg)] px-3.5 py-2 min-h-[42px]">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[var(--ink-muted)]">
+                <CalendarBlank size={15} weight="bold" className="text-[var(--canopy)]" />
+                Periode
+              </span>
               <input
                 type="month"
                 value={period}
                 onChange={(e) => setPeriod(e.target.value)}
                 aria-label="Pilih Periode Bulan"
-                className="font-num bg-transparent text-sm font-bold text-[var(--ink)] focus:outline-none"
+                className="font-num bg-transparent text-xs sm:text-sm font-bold text-[var(--ink)] focus:outline-none"
               />
-            </div>
+            </label>
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar rounded-2xl well-recessed p-1.5">
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-0.5">
             <button
               type="button"
               onClick={() => setClassId("all")}
-              className={`btn-tactile shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold ${
+              className={`btn-tactile shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold ${
                 classId === "all"
-                  ? "bg-white text-[var(--ink)] shadow-sm"
-                  : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                  ? "bg-[#0A3D26] text-white"
+                  : "bg-[var(--surface-mint)] text-[var(--canopy)]"
               }`}
             >
               Semua Kelas
@@ -269,10 +275,10 @@ function RekapContent() {
                   key={cls.id}
                   type="button"
                   onClick={() => setClassId(String(cls.id))}
-                  className={`btn-tactile shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold ${
+                  className={`btn-tactile shrink-0 rounded-full px-3.5 py-1.5 text-xs font-bold ${
                     active
-                      ? "bg-white text-[var(--accent)] shadow-sm"
-                      : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                      ? "bg-[#0A3D26] text-white"
+                      : "bg-[var(--surface-mint)] text-[var(--canopy)]"
                   }`}
                 >
                   {cls.name}
@@ -282,230 +288,226 @@ function RekapContent() {
           </div>
         </section>
 
-        {/* Error State */}
-        {error && (
-          <div
-            role="alert"
-            className="no-print flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-900"
-          >
-            <div className="flex items-center gap-2">
-              <WarningCircle size={18} weight="fill" className="text-red-700" />
-              <span>{error}</span>
+        <div className="px-3.5 lg:px-0 space-y-4">
+          {error && (
+            <div
+              role="alert"
+              className="no-print flex items-center justify-between rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-900"
+            >
+              <div className="flex items-center gap-2">
+                <WarningCircle size={18} weight="fill" className="text-red-700" />
+                <span>{error}</span>
+              </div>
+              <button
+                type="button"
+                onClick={fetchRekap}
+                className="inline-flex items-center gap-1 rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white"
+              >
+                <ArrowClockwise size={14} />
+                <span>Muat Ulang</span>
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={fetchRekap}
-              className="inline-flex items-center gap-1 rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white"
-            >
-              <ArrowClockwise size={14} />
-              <span>Muat Ulang</span>
-            </button>
-          </div>
-        )}
+          )}
 
-        {/* Loading / Empty */}
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-20 w-full animate-pulse rounded-2xl card-elevated" />
-            ))}
-          </div>
-        ) : sortedRows.length === 0 ? (
-          <div className="card-elevated rounded-2xl p-10 text-center space-y-1">
-            <p className="text-sm font-bold text-[var(--ink)]">Data siswa tidak ditemukan</p>
-            <p className="text-xs text-[var(--ink-muted)]">
-              Coba ubah kata kunci pencarian atau pilih kelas lain.
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Mobile Native Card List (< 768px, hidden on Print) */}
-            <section
-              aria-label="Kartu Rekapitulasi Mobile"
-              className="no-print md:hidden space-y-3 animate-cascade"
-              style={{ animationDelay: "80ms" }}
-            >
-              <div className="flex items-center justify-between px-1 text-xs font-bold text-[var(--ink-muted)]">
-                <span>{sortedRows.length} Siswa</span>
-                <button
-                  type="button"
-                  onClick={() => handleSort(sortBy === "name" ? "percentage" : "name")}
-                  className="inline-flex items-center gap-1 text-[var(--accent)]"
-                >
-                  <ArrowsDownUp size={14} weight="bold" />
-                  <span>Urut: {sortBy === "name" ? "Nama" : "Persentase"}</span>
-                </button>
-              </div>
-
-              {sortedRows.map((row) => (
-                <article
-                  key={row.student_id}
-                  className="card-elevated rounded-2xl p-4 space-y-3"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-soft)] font-num text-xs font-extrabold text-[var(--accent)]">
-                        {initialsOf(row.name)}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-extrabold text-[var(--ink)] truncate">
-                          {row.name}
-                        </p>
-                        <p className="font-num text-[11px] font-medium text-[var(--ink-muted)]">
-                          {row.nis} • {row.class_name} ({row.gender})
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="font-num shrink-0 rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-extrabold text-[var(--accent)]">
-                      {row.percentage}%
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-4 gap-1.5 text-center">
-                    <div className="rounded-xl bg-[var(--status-hadir-bg)] py-1.5">
-                      <p className="text-[10px] font-bold text-[var(--status-hadir-fg)]">Hadir</p>
-                      <p className="font-num text-sm font-extrabold text-[var(--status-hadir-fg)]">
-                        {row.hadir}
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-[var(--status-sakit-bg)] py-1.5">
-                      <p className="text-[10px] font-bold text-[var(--status-sakit-fg)]">Sakit</p>
-                      <p className="font-num text-sm font-extrabold text-[var(--status-sakit-fg)]">
-                        {row.sakit}
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-[var(--status-izin-bg)] py-1.5">
-                      <p className="text-[10px] font-bold text-[var(--status-izin-fg)]">Izin</p>
-                      <p className="font-num text-sm font-extrabold text-[var(--status-izin-fg)]">
-                        {row.izin}
-                      </p>
-                    </div>
-                    <div className="rounded-xl bg-[var(--status-alpha-bg)] py-1.5">
-                      <p className="text-[10px] font-bold text-[var(--status-alpha-fg)]">Alpha</p>
-                      <p className="font-num text-sm font-extrabold text-[var(--status-alpha-fg)]">
-                        {row.alpha}
-                      </p>
-                    </div>
-                  </div>
-
-                  {row.note && (
-                    <p className="rounded-xl well-recessed px-3 py-1.5 text-xs text-[var(--ink-muted)]">
-                      Catatan: <span className="font-semibold text-[var(--ink)]">{row.note}</span>
-                    </p>
-                  )}
-                </article>
+          {loading ? (
+            <div className="space-y-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-24 w-full animate-pulse rounded-3xl card-pro" />
               ))}
-            </section>
+            </div>
+          ) : sortedRows.length === 0 ? (
+            <div className="card-pro rounded-3xl p-10 text-center space-y-1">
+              <p className="text-sm font-bold text-[var(--ink)]">Data siswa tidak ditemukan</p>
+              <p className="text-xs text-[var(--ink-muted)]">
+                Coba ubah kata kunci pencarian atau pilih kelas lain.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Mobile Student Cards (< 768px) */}
+              <section
+                aria-label="Kartu Rekapitulasi Mobile"
+                className="no-print md:hidden space-y-3 animate-cascade"
+                style={{ animationDelay: "80ms" }}
+              >
+                <div className="flex items-center justify-between px-1 text-xs font-bold text-[var(--ink-muted)]">
+                  <span>{sortedRows.length} Siswa</span>
+                  <button
+                    type="button"
+                    onClick={() => handleSort(sortBy === "name" ? "percentage" : "name")}
+                    className="inline-flex items-center gap-1 text-[var(--canopy)]"
+                  >
+                    <ArrowsDownUp size={14} weight="bold" />
+                    <span>Urut: {sortBy === "name" ? "Nama" : "Persentase"}</span>
+                  </button>
+                </div>
 
-            {/* Desktop Formal Ledger Table (>= 768px & Always Visible on Print) */}
-            <section
-              aria-label="Daftar Rekapitulasi Siswa"
-              className="hidden md:block print-only card-elevated rounded-2xl overflow-hidden animate-cascade"
-              style={{ animationDelay: "80ms" }}
-            >
-              <div className="overflow-x-auto">
-                <table className="print-table w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-[var(--surface-raised)] border-b border-[var(--border-strong)] text-xs font-bold uppercase tracking-wider text-[var(--ink-muted)]">
-                      <th className="py-3.5 px-4 text-right w-12">No</th>
-                      <th className="py-3.5 px-3.5">NIS/NISN</th>
-                      <th
-                        className="py-3.5 px-3.5"
-                        aria-sort={
-                          sortBy === "name"
-                            ? sortDir === "asc"
-                              ? "ascending"
-                              : "descending"
-                            : "none"
-                        }
-                      >
-                        <button
-                          type="button"
-                          onClick={() => handleSort("name")}
-                          className="inline-flex items-center gap-1 hover:text-[var(--ink)]"
+                {sortedRows.map((row) => (
+                  <article key={row.student_id} className="card-pro rounded-3xl p-4 space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--surface-mint)] font-num text-xs font-extrabold text-[var(--canopy)]">
+                          {initialsOf(row.name)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-extrabold text-[var(--ink)] truncate">
+                            {row.name}
+                          </p>
+                          <p className="font-num text-[11px] font-medium text-[var(--ink-muted)]">
+                            {row.nis} • {row.class_name} ({row.gender})
+                          </p>
+                        </div>
+                      </div>
+
+                      <span className="font-num shrink-0 rounded-full bg-[#0B1410] px-2.5 py-1 text-xs font-extrabold text-white">
+                        {row.percentage}%
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-4 gap-2 text-left">
+                      <div>
+                        <p className="text-[11px] font-medium text-[var(--ink-muted)]">Hadir</p>
+                        <p className="font-num text-sm font-extrabold text-[var(--status-hadir-fg)]">{row.hadir}</p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium text-[var(--ink-muted)]">Sakit</p>
+                        <p className="font-num text-sm font-extrabold text-[var(--status-sakit-fg)]">{row.sakit}</p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium text-[var(--ink-muted)]">Izin</p>
+                        <p className="font-num text-sm font-extrabold text-[var(--status-izin-fg)]">{row.izin}</p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-medium text-[var(--ink-muted)]">Alpha</p>
+                        <p className="font-num text-sm font-extrabold text-[var(--status-alpha-fg)]">{row.alpha}</p>
+                      </div>
+                    </div>
+
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--bg)]">
+                      <div
+                        style={{ width: `${Math.min(100, row.percentage)}%` }}
+                        className="h-full rounded-full bg-gradient-to-r from-[#115737] to-[#84CC16]"
+                      />
+                    </div>
+
+                    {row.note && (
+                      <p className="rounded-xl bg-[var(--bg)] px-3 py-1.5 text-xs text-[var(--ink-muted)]">
+                        Catatan: <span className="font-semibold text-[var(--ink)]">{row.note}</span>
+                      </p>
+                    )}
+                  </article>
+                ))}
+              </section>
+
+              {/* Desktop Formal Ledger Table (>= 768px & Print) */}
+              <section
+                aria-label="Daftar Rekapitulasi Siswa"
+                className="hidden md:block print-only card-pro rounded-3xl overflow-hidden animate-cascade"
+                style={{ animationDelay: "80ms" }}
+              >
+                <div className="overflow-x-auto">
+                  <table className="print-table w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-[var(--surface-raised)] border-b border-[var(--border-strong)] text-xs font-bold uppercase tracking-wider text-[var(--ink-muted)]">
+                        <th className="py-3.5 px-4 text-right w-12">No</th>
+                        <th className="py-3.5 px-3.5">NIS/NISN</th>
+                        <th
+                          className="py-3.5 px-3.5"
+                          aria-sort={
+                            sortBy === "name"
+                              ? sortDir === "asc"
+                                ? "ascending"
+                                : "descending"
+                              : "none"
+                          }
                         >
-                          <span>Nama Siswa</span>
-                          <ArrowsDownUp size={13} />
-                        </button>
-                      </th>
-                      <th className="py-3.5 px-3">Kelas</th>
-                      <th className="py-3.5 px-2.5 text-center">L/P</th>
-                      <th className="py-3.5 px-3 text-right">H</th>
-                      <th className="py-3.5 px-3 text-right">S</th>
-                      <th className="py-3.5 px-3 text-right">I</th>
-                      <th className="py-3.5 px-3 text-right">A</th>
-                      <th
-                        className="py-3.5 px-4 text-right"
-                        aria-sort={
-                          sortBy === "percentage"
-                            ? sortDir === "asc"
-                              ? "ascending"
-                              : "descending"
-                            : "none"
-                        }
-                      >
-                        <button
-                          type="button"
-                          onClick={() => handleSort("percentage")}
-                          className="inline-flex items-center justify-end gap-1 hover:text-[var(--ink)] ml-auto"
+                          <button
+                            type="button"
+                            onClick={() => handleSort("name")}
+                            className="inline-flex items-center gap-1 hover:text-[var(--ink)]"
+                          >
+                            <span>Nama Siswa</span>
+                            <ArrowsDownUp size={13} />
+                          </button>
+                        </th>
+                        <th className="py-3.5 px-3">Kelas</th>
+                        <th className="py-3.5 px-2.5 text-center">L/P</th>
+                        <th className="py-3.5 px-3 text-right">H</th>
+                        <th className="py-3.5 px-3 text-right">S</th>
+                        <th className="py-3.5 px-3 text-right">I</th>
+                        <th className="py-3.5 px-3 text-right">A</th>
+                        <th
+                          className="py-3.5 px-4 text-right"
+                          aria-sort={
+                            sortBy === "percentage"
+                              ? sortDir === "asc"
+                                ? "ascending"
+                                : "descending"
+                              : "none"
+                          }
                         >
-                          <span>%</span>
-                          <ArrowsDownUp size={13} />
-                        </button>
-                      </th>
-                      <th className="py-3.5 px-4">Keterangan</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[var(--border)] text-sm">
-                    {sortedRows.map((row, index) => (
-                      <tr
-                        key={row.student_id}
-                        className="hover:bg-[var(--surface-raised)] transition-colors"
-                      >
-                        <td className="py-3 px-4 text-right font-num text-[var(--ink-muted)]">
-                          {index + 1}
-                        </td>
-                        <td className="py-3 px-3.5 font-num text-xs font-semibold text-[var(--ink-muted)]">
-                          {row.nis}
-                        </td>
-                        <td className="py-3 px-3.5 font-bold text-[var(--ink)] whitespace-nowrap">
-                          {row.name}
-                        </td>
-                        <td className="py-3 px-3 text-xs font-bold text-[var(--ink-muted)] whitespace-nowrap">
-                          {row.class_name}
-                        </td>
-                        <td className="py-3 px-2.5 text-center font-num text-xs font-bold">
-                          {row.gender}
-                        </td>
-                        <td className="py-3 px-3 text-right font-num font-extrabold text-[var(--status-hadir-fg)]">
-                          {row.hadir}
-                        </td>
-                        <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-sakit-fg)]">
-                          {row.sakit}
-                        </td>
-                        <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-izin-fg)]">
-                          {row.izin}
-                        </td>
-                        <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-alpha-fg)]">
-                          {row.alpha}
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          <span className="font-num inline-flex items-center rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-extrabold text-[var(--accent)]">
-                            {row.percentage}%
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-xs text-[var(--ink-muted)] max-w-[200px] truncate">
-                          {row.note || "—"}
-                        </td>
+                          <button
+                            type="button"
+                            onClick={() => handleSort("percentage")}
+                            className="inline-flex items-center justify-end gap-1 hover:text-[var(--ink)] ml-auto"
+                          >
+                            <span>%</span>
+                            <ArrowsDownUp size={13} />
+                          </button>
+                        </th>
+                        <th className="py-3.5 px-4">Keterangan</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-          </>
-        )}
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border)] text-sm">
+                      {sortedRows.map((row, index) => (
+                        <tr
+                          key={row.student_id}
+                          className="hover:bg-[var(--surface-raised)] transition-colors"
+                        >
+                          <td className="py-3 px-4 text-right font-num text-[var(--ink-muted)]">
+                            {index + 1}
+                          </td>
+                          <td className="py-3 px-3.5 font-num text-xs font-semibold text-[var(--ink-muted)]">
+                            {row.nis}
+                          </td>
+                          <td className="py-3 px-3.5 font-bold text-[var(--ink)] whitespace-nowrap">
+                            {row.name}
+                          </td>
+                          <td className="py-3 px-3 text-xs font-bold text-[var(--ink-muted)] whitespace-nowrap">
+                            {row.class_name}
+                          </td>
+                          <td className="py-3 px-2.5 text-center font-num text-xs font-bold">
+                            {row.gender}
+                          </td>
+                          <td className="py-3 px-3 text-right font-num font-extrabold text-[var(--status-hadir-fg)]">
+                            {row.hadir}
+                          </td>
+                          <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-sakit-fg)]">
+                            {row.sakit}
+                          </td>
+                          <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-izin-fg)]">
+                            {row.izin}
+                          </td>
+                          <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-alpha-fg)]">
+                            {row.alpha}
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            <span className="font-num inline-flex items-center rounded-full bg-[#0B1410] px-2.5 py-0.5 text-xs font-extrabold text-white">
+                              {row.percentage}%
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-xs text-[var(--ink-muted)] max-w-[200px] truncate">
+                            {row.note || "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            </>
+          )}
+        </div>
       </div>
     </AppShell>
   );
