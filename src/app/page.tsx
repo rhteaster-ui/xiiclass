@@ -1,506 +1,303 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
-  CheckCircle,
-  FirstAidKit,
-  EnvelopeSimple,
-  WarningCircle,
-  UsersThree,
   ArrowUpRight,
-  CalendarBlank,
-  ArrowClockwise,
-  GraduationCap,
-  BookOpenText,
-  ChalkboardTeacher,
-  SquaresFour,
+  Table,
+  UsersThree,
+  ShieldCheck,
+  Printer,
+  FileXls,
+  CheckCircle,
+  Buildings,
 } from "@phosphor-icons/react";
-import { AppShell } from "@/components/AppShell";
+import { SplashScreen } from "@/components/SplashScreen";
+import { AmbientBackdrop } from "@/components/AmbientBackdrop";
 import { withBasePath } from "@/lib/paths";
 
-interface OverviewData {
-  period: string;
-  school: {
-    name: string;
-    npsn: string;
-    address: string;
-    academic_year: string;
-    semester: string;
-  };
-  classes: Array<{
-    id: number;
-    name: string;
-    homeroom_teacher: string;
-    student_count: number;
-  }>;
-  summary: {
-    total_students: number;
-    total_hadir: number;
-    total_sakit: number;
-    total_izin: number;
-    total_alpha: number;
-    attendance_rate: number;
-  };
-  classBreakdown: Array<{
-    id: number;
-    name: string;
-    homeroom_teacher: string;
-    total_students: number;
-    hadir: number;
-    sakit: number;
-    izin: number;
-    alpha: number;
-  }>;
+interface LiveSummary {
+  attendanceRate: number;
+  totalStudents: number;
+  totalClasses: number;
+  academicYear: string;
+  semester: string;
 }
 
-function AttendanceRing({ rate }: { rate: number }) {
-  const radius = 34;
-  const circumference = 2 * Math.PI * radius;
-  const clamped = Math.max(0, Math.min(100, rate));
-  const offset = circumference - (clamped / 100) * circumference;
-
-  return (
-    <div className="relative flex h-24 w-24 items-center justify-center shrink-0">
-      <svg className="h-24 w-24 -rotate-90" viewBox="0 0 84 84" aria-hidden="true">
-        <circle
-          cx="42"
-          cy="42"
-          r={radius}
-          fill="none"
-          stroke="rgba(255,255,255,0.16)"
-          strokeWidth="7"
-        />
-        <circle
-          cx="42"
-          cy="42"
-          r={radius}
-          fill="none"
-          stroke="#A3E635"
-          strokeWidth="7"
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          style={{ transition: "stroke-dashoffset 600ms cubic-bezier(0.22, 1, 0.36, 1)" }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="font-num text-lg font-extrabold text-white leading-none">
-          {clamped}%
-        </span>
-        <span className="mt-0.5 text-[9px] font-bold uppercase tracking-wider text-lime-200/90">
-          Hadir
-        </span>
-      </div>
-    </div>
-  );
-}
-
-const CLASS_ICONS = [GraduationCap, BookOpenText, ChalkboardTeacher];
-
-export default function DashboardPage() {
-  const [period, setPeriod] = useState(() => new Date().toISOString().slice(0, 7));
-  const [classId, setClassId] = useState("all");
-  const [data, setData] = useState<OverviewData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const loadOverview = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(
-        withBasePath(
-          `/api/overview?period=${encodeURIComponent(period)}&classId=${encodeURIComponent(classId)}`
-        )
-      );
-      if (!res.ok) throw new Error("Gagal memuat ringkasan data.");
-      const json = (await res.json()) as OverviewData;
-      setData(json);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Terjadi kesalahan jaringan.");
-    } finally {
-      setLoading(false);
-    }
-  }, [period, classId]);
+export default function LandingPage() {
+  const router = useRouter();
+  const [exiting, setExiting] = useState(false);
+  const [stats, setStats] = useState<LiveSummary>({
+    attendanceRate: 94.7,
+    totalStudents: 18,
+    totalClasses: 3,
+    academicYear: "2026/2027",
+    semester: "Ganjil",
+  });
 
   useEffect(() => {
-    loadOverview();
-  }, [loadOverview]);
+    fetch(withBasePath("/api/overview"))
+      .then((r) => r.json())
+      .then((d) => {
+        if (d?.summary) {
+          setStats({
+            attendanceRate: d.summary.attendance_rate ?? 94.7,
+            totalStudents: d.summary.total_students ?? 18,
+            totalClasses: d.classes?.length ?? 3,
+            academicYear: d.school?.academic_year || "2026/2027",
+            semester: d.school?.semester || "Ganjil",
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
-  const totalSessions =
-    (data?.summary.total_hadir ?? 0) +
-    (data?.summary.total_sakit ?? 0) +
-    (data?.summary.total_izin ?? 0) +
-    (data?.summary.total_alpha ?? 0);
-
-  const pctOf = (v: number) =>
-    totalSessions > 0 ? Math.round((v / totalSessions) * 1000) / 10 : 0;
+  const navigateWithTransition = (href: string) => {
+    setExiting(true);
+    setTimeout(() => {
+      router.push(href);
+    }, 260);
+  };
 
   return (
-    <AppShell>
-      <div className="space-y-5">
-        {/* Deep Forest Canopy Hero (Full-bleed mobile, rounded-3xl desktop) */}
-        <section
-          aria-label="Ringkasan Sistem"
-          className="relative overflow-hidden rounded-b-[32px] lg:rounded-3xl bg-[#0A3D26] text-white shadow-[0_22px_48px_-16px_rgba(7,41,25,0.45)] animate-cascade"
-        >
-          <img
-            src={withBasePath("/banner-madrasah.jpg")}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover opacity-55"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-br from-[#072919]/95 via-[#0A3D26]/88 to-[#115737]/72"
-          />
+    <>
+      <SplashScreen />
 
-          <div className="relative z-10 px-5 pt-5 pb-12 sm:px-7 sm:pt-7 sm:pb-14 space-y-6">
-            {/* Top App Row */}
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="lg:hidden h-9 w-9 rounded-xl bg-white/15 p-0.5 ring-1 ring-white/25">
-                  <img
-                    src={withBasePath("/icon-madrasah.jpg")}
-                    alt="E-Rekap"
-                    width={36}
-                    height={36}
-                    className="h-full w-full rounded-[10px] object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-lime-200/90">
-                    {data?.school
-                      ? `TA ${data.school.academic_year} • ${data.school.semester}`
-                      : "E-Rekap Madrasah"}
-                  </p>
-                  <p className="text-sm font-extrabold text-white lg:hidden">E-Rekap</p>
-                </div>
-              </div>
+      <div
+        className={`relative min-h-screen flex flex-col bg-[var(--bg)] text-[var(--ink)] overflow-x-hidden ${
+          exiting ? "animate-page-exit pointer-events-none" : ""
+        }`}
+      >
+        <AmbientBackdrop variant="light" />
 
-              <label className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 ring-1 ring-white/20 backdrop-blur-md">
-                <CalendarBlank size={14} weight="bold" className="text-[#A3E635]" />
-                <input
-                  type="month"
-                  value={period}
-                  onChange={(e) => setPeriod(e.target.value)}
-                  aria-label="Pilih Periode Bulan"
-                  className="font-num bg-transparent text-xs font-bold text-white focus:outline-none [color-scheme:dark]"
-                />
-              </label>
+        {/* Sticky Top Navbar */}
+        <header className="relative z-20 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl p-0.5 bg-gradient-to-br from-[#115737] to-[#072919] shadow-md">
+              <img
+                src={withBasePath("/icon-madrasah.jpg")}
+                alt="Logo E-Rekap"
+                width={40}
+                height={40}
+                className="h-full w-full rounded-[10px] object-cover"
+              />
             </div>
-
-            {/* Hero Metric & Action Row */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-              <div className="space-y-3">
-                <p className="text-xs font-semibold text-emerald-100/80">
-                  Total Persentase Kehadiran
-                </p>
-                <div className="flex items-baseline gap-3">
-                  <h1 className="font-num text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
-                    {loading ? "—" : `${data?.summary.attendance_rate ?? 0}%`}
-                  </h1>
-                  <span className="rounded-full bg-white/15 px-2.5 py-0.5 font-num text-xs font-bold text-emerald-100">
-                    {loading ? "..." : `${data?.summary.total_students ?? 0} Siswa`}
-                  </span>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                  <Link
-                    href={`/rekap?period=${encodeURIComponent(period)}&classId=${encodeURIComponent(classId)}`}
-                    className="btn-tactile inline-flex items-center gap-2 rounded-full bg-[#A3E635] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[#072919] shadow-[0_8px_20px_-4px_rgba(163,230,53,0.5)] hover:bg-[#BEF264]"
-                  >
-                    <span>Buka Rekap</span>
-                    <ArrowUpRight size={16} weight="bold" />
-                  </Link>
-                  <Link
-                    href="/info"
-                    className="btn-tactile inline-flex items-center gap-2 rounded-full bg-white/12 px-4 py-2.5 text-xs sm:text-sm font-bold text-white ring-1 ring-white/20 backdrop-blur-md hover:bg-white/20"
-                  >
-                    <span>Info Sekolah</span>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="hidden sm:flex items-center gap-4 rounded-2xl bg-black/20 p-3.5 ring-1 ring-white/15 backdrop-blur-md self-start md:self-auto">
-                <AttendanceRing rate={loading ? 0 : data?.summary.attendance_rate ?? 0} />
-                <div className="space-y-1.5 text-xs font-semibold text-emerald-100/90">
-                  <p className="flex items-center justify-between gap-4">
-                    <span>Hadir</span>
-                    <span className="font-num font-bold text-white">{data?.summary.total_hadir ?? 0}</span>
-                  </p>
-                  <p className="flex items-center justify-between gap-4">
-                    <span>Sakit</span>
-                    <span className="font-num font-bold text-amber-200">{data?.summary.total_sakit ?? 0}</span>
-                  </p>
-                  <p className="flex items-center justify-between gap-4">
-                    <span>Izin</span>
-                    <span className="font-num font-bold text-sky-200">{data?.summary.total_izin ?? 0}</span>
-                  </p>
-                  <p className="flex items-center justify-between gap-4">
-                    <span>Alpha</span>
-                    <span className="font-num font-bold text-rose-200">{data?.summary.total_alpha ?? 0}</span>
-                  </p>
-                </div>
-              </div>
+            <div>
+              <p className="text-base font-extrabold tracking-tight text-[var(--ink)] leading-none">
+                E-Rekap
+              </p>
+              <p className="text-[11px] font-semibold text-[var(--ink-muted)] mt-0.5">
+                Rekapitulasi Kehadiran
+              </p>
             </div>
           </div>
-        </section>
 
-        {/* Overlapping White Category Sheet (-mt-8) */}
-        <section
-          aria-label="Pilih Kelas"
-          className="relative z-20 -mt-8 mx-3.5 lg:mx-0 sheet-overlap rounded-3xl p-4 sm:p-5 animate-cascade"
-          style={{ animationDelay: "40ms" }}
-        >
-          <div className="flex items-center justify-between mb-3.5">
-            <h2 className="text-sm font-extrabold text-[var(--ink)]">Filter Kelas</h2>
-            <span className="font-num text-xs font-bold text-[var(--ink-muted)]">
-              {data ? `${data.classes.length} Kelas Aktif` : "..."}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-4 gap-2 sm:gap-3">
+          <nav aria-label="Menu Beranda" className="hidden md:flex items-center gap-6 text-sm font-bold text-[var(--ink-muted)]">
+            <a href="#fitur" className="hover:text-[var(--canopy)] transition-colors">
+              Fitur Utama
+            </a>
             <button
               type="button"
-              onClick={() => setClassId("all")}
-              className="btn-tactile flex flex-col items-center gap-2 group"
+              onClick={() => navigateWithTransition("/rekap")}
+              className="hover:text-[var(--canopy)] transition-colors"
             >
-              <span
-                className={`flex h-12 w-12 items-center justify-center rounded-full transition-all ${
-                  classId === "all"
-                    ? "bg-[#0A3D26] text-[#A3E635] ring-4 ring-[#A3E635]/30 shadow-md"
-                    : "bg-[var(--surface-mint)] text-[var(--canopy)] group-hover:bg-[#d7efe0]"
-                }`}
-              >
-                <SquaresFour size={22} weight={classId === "all" ? "fill" : "regular"} />
-              </span>
-              <span
-                className={`text-xs font-bold truncate max-w-full ${
-                  classId === "all" ? "text-[var(--canopy)]" : "text-[var(--ink-muted)]"
-                }`}
-              >
-                Semua
-              </span>
+              Tabel Rekap
             </button>
+            <button
+              type="button"
+              onClick={() => navigateWithTransition("/info")}
+              className="hover:text-[var(--canopy)] transition-colors"
+            >
+              Info Sekolah
+            </button>
+          </nav>
 
-            {data?.classes.map((cls, idx) => {
-              const active = classId === String(cls.id);
-              const Icon = CLASS_ICONS[idx % CLASS_ICONS.length];
-              return (
-                <button
-                  key={cls.id}
-                  type="button"
-                  onClick={() => setClassId(String(cls.id))}
-                  className="btn-tactile flex flex-col items-center gap-2 group"
-                >
-                  <span
-                    className={`flex h-12 w-12 items-center justify-center rounded-full transition-all ${
-                      active
-                        ? "bg-[#0A3D26] text-[#A3E635] ring-4 ring-[#A3E635]/30 shadow-md"
-                        : "bg-[var(--surface-mint)] text-[var(--canopy)] group-hover:bg-[#d7efe0]"
-                    }`}
-                  >
-                    <Icon size={22} weight={active ? "fill" : "regular"} />
-                  </span>
-                  <span
-                    className={`text-xs font-bold truncate max-w-full ${
-                      active ? "text-[var(--canopy)]" : "text-[var(--ink-muted)]"
-                    }`}
-                  >
-                    {cls.name}
-                  </span>
-                </button>
-              );
-            })}
+          <button
+            type="button"
+            onClick={() => navigateWithTransition("/dashboard")}
+            className="btn-tactile inline-flex items-center gap-1.5 rounded-full bg-[#0A3D26] px-4 py-2.5 text-xs sm:text-sm font-extrabold text-[#A3E635] shadow-md hover:bg-[#072919]"
+          >
+            <span>Buka App</span>
+            <ArrowUpRight size={15} weight="bold" />
+          </button>
+        </header>
+
+        {/* Hero Section (Fits in First Viewport) */}
+        <section className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-6 pb-12 text-center">
+          <div className="mx-auto max-w-3xl space-y-6 animate-cascade">
+            <div className="inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-xs font-extrabold text-[var(--canopy)] shadow-sm ring-1 ring-[var(--border-strong)]">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+              </span>
+              <span>
+                TA {stats.academicYear} • Semester {stats.semester}
+              </span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.08]">
+              Rekap Kehadiran Siswa{" "}
+              <span className="text-[#0F5132]">Lebih Presisi.</span>
+            </h1>
+
+            <p className="mx-auto max-w-xl text-base sm:text-lg text-[var(--ink-muted)] leading-relaxed">
+              Pantau persentase kehadiran per kelas secara terbuka, kelola data rekap oleh Admin, dan cetak laporan standar sekolah dalam satu ketukan.
+            </p>
+
+            {/* Primary & Secondary CTAs */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
+              <button
+                type="button"
+                onClick={() => navigateWithTransition("/dashboard")}
+                className="btn-tactile inline-flex items-center gap-2 rounded-full bg-[#A3E635] px-6 py-3.5 text-sm font-extrabold text-[#072919] shadow-[0_12px_26px_-6px_rgba(163,230,53,0.65)] hover:bg-[#BEF264]"
+              >
+                <span>Masuk ke Dashboard</span>
+                <ArrowUpRight size={18} weight="bold" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => navigateWithTransition("/rekap")}
+                className="btn-tactile inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-bold text-[var(--ink)] shadow-sm ring-1 ring-[var(--border-strong)] hover:bg-[var(--surface-raised)]"
+              >
+                <Table size={18} weight="bold" className="text-[var(--canopy)]" />
+                <span>Lihat Tabel Rekap</span>
+              </button>
+            </div>
+
+            {/* Floating Live Snapshot Strip */}
+            <div className="pt-4">
+              <div className="mx-auto max-w-2xl sheet-overlap rounded-3xl p-4 sm:p-5 grid grid-cols-3 gap-3 text-left">
+                <div className="rounded-2xl bg-[var(--bg)] p-3 sm:p-4">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-muted)]">
+                    Kehadiran
+                  </p>
+                  <p className="mt-1 font-num text-2xl sm:text-3xl font-extrabold text-[var(--canopy)]">
+                    {stats.attendanceRate}%
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-[var(--bg)] p-3 sm:p-4">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-muted)]">
+                    Total Siswa
+                  </p>
+                  <p className="mt-1 font-num text-2xl sm:text-3xl font-extrabold text-[var(--ink)]">
+                    {stats.totalStudents}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-[var(--bg)] p-3 sm:p-4">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--ink-muted)]">
+                    Multi-Kelas
+                  </p>
+                  <p className="mt-1 font-num text-2xl sm:text-3xl font-extrabold text-[var(--ink)]">
+                    {stats.totalClasses}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
-        <div className="px-3.5 lg:px-0 space-y-6">
-          {/* Error State */}
-          {error && (
-            <div
-              role="alert"
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 text-red-900"
-            >
-              <div className="flex items-center gap-2.5 text-sm font-medium">
-                <WarningCircle size={20} weight="fill" className="text-red-700 shrink-0" />
-                <span>{error}</span>
-              </div>
-              <button
-                type="button"
-                onClick={loadOverview}
-                className="btn-tactile inline-flex items-center gap-1.5 rounded-lg bg-red-700 px-3 py-1.5 text-xs font-semibold text-white"
-              >
-                <ArrowClockwise size={14} />
-                <span>Coba Lagi</span>
-              </button>
-            </div>
-          )}
-
-          {/* 4 Metric Cards */}
-          <section aria-label="Metrik Kehadiran" className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+        {/* 4-Column Capability Strip */}
+        <section id="fitur" className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               {
-                label: "Hadir",
-                value: data?.summary.total_hadir ?? 0,
-                icon: CheckCircle,
-                bg: "bg-[var(--status-hadir-bg)]",
-                fg: "text-[var(--status-hadir-fg)]",
-                bar: "bg-[#15803D]",
+                title: "Multi-Kelas Terpadu",
+                desc: "Ringkasan kehadiran per kelas dengan persentase dan bar komposisi otomatis.",
+                icon: UsersThree,
               },
               {
-                label: "Sakit",
-                value: data?.summary.total_sakit ?? 0,
-                icon: FirstAidKit,
-                bg: "bg-[var(--status-sakit-bg)]",
-                fg: "text-[var(--status-sakit-fg)]",
-                bar: "bg-amber-500",
+                title: "Review & Admin",
+                desc: "Siswa dan guru bebas memantau rekap; edit data terkunci aman untuk Admin.",
+                icon: ShieldCheck,
               },
               {
-                label: "Izin",
-                value: data?.summary.total_izin ?? 0,
-                icon: EnvelopeSimple,
-                bg: "bg-[var(--status-izin-bg)]",
-                fg: "text-[var(--status-izin-fg)]",
-                bar: "bg-sky-600",
+                title: "Cetak A4 Formal",
+                desc: "Layout A4 Landscape siap cetak lengkap dengan Kop Surat resmi lembaga.",
+                icon: Printer,
               },
               {
-                label: "Alpha",
-                value: data?.summary.total_alpha ?? 0,
-                icon: WarningCircle,
-                bg: "bg-[var(--status-alpha-bg)]",
-                fg: "text-[var(--status-alpha-fg)]",
-                bar: "bg-rose-600",
+                title: "Ekspor Excel",
+                desc: "Unduh laporan rekap bulanan dalam format spreadsheet .xlsx sekali klik.",
+                icon: FileXls,
               },
             ].map((item) => {
               const Icon = item.icon;
-              const share = pctOf(item.value);
               return (
-                <div
-                  key={item.label}
-                  className="card-pro rounded-2xl p-4 flex flex-col justify-between gap-3"
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-[var(--ink-muted)]">
-                      {item.label}
-                    </span>
-                    <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${item.bg} ${item.fg}`}>
-                      <Icon size={17} weight="fill" />
-                    </span>
-                  </div>
-                  <div className="flex items-baseline justify-between gap-2">
-                    <p className="font-num text-2xl font-extrabold text-[var(--ink)]">
-                      {loading ? "—" : item.value.toLocaleString("id-ID")}
-                    </p>
-                    <span className={`font-num text-xs font-extrabold ${item.fg}`}>
-                      {share}%
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-[var(--bg)]">
-                    <div
-                      style={{ width: `${Math.min(100, share)}%` }}
-                      className={`h-full rounded-full ${item.bar}`}
-                    />
-                  </div>
+                <div key={item.title} className="card-pro rounded-3xl p-5 space-y-3">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--surface-mint)] text-[var(--canopy)]">
+                    <Icon size={22} weight="fill" />
+                  </span>
+                  <h2 className="text-base font-extrabold text-[var(--ink)]">{item.title}</h2>
+                  <p className="text-xs sm:text-sm text-[var(--ink-muted)] leading-relaxed">
+                    {item.desc}
+                  </p>
                 </div>
               );
             })}
-          </section>
+          </div>
+        </section>
 
-          {/* Class Breakdown Cards (Ref-2 Right Screen Architecture) */}
-          <section aria-label="Ringkasan Per Kelas" className="space-y-3.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <UsersThree size={20} weight="fill" className="text-[var(--canopy)]" />
-                <h2 className="text-base font-extrabold text-[var(--ink)]">
-                  Ringkasan Per Kelas
+        {/* Deep Forest Showcase Banner (Growify Dark Green Band) */}
+        <section className="relative z-10 mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 pb-12">
+          <div className="relative overflow-hidden rounded-3xl bg-[#0A3D26] p-6 sm:p-9 text-white shadow-[0_20px_45px_-14px_rgba(7,41,25,0.45)]">
+            <AmbientBackdrop variant="canopy" />
+            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="space-y-2.5 max-w-xl">
+                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#A3E635]">
+                  <CheckCircle size={15} weight="fill" />
+                  <span>Siap Pakai & Database Persisten</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                  Transparansi Rekapitulasi Standar Sekolah
                 </h2>
+                <p className="text-sm text-emerald-100/85 leading-relaxed">
+                  Seluruh data rekap tersimpan rapi di database SQLite dan dapat diakses dari HP maupun desktop layaknya aplikasi native.
+                </p>
               </div>
-              <Link
-                href="/rekap"
-                className="text-xs font-bold text-[var(--canopy)] hover:underline underline-offset-4"
-              >
-                Lihat Semua
-              </Link>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigateWithTransition("/dashboard")}
+                  className="btn-tactile inline-flex items-center gap-2 rounded-full bg-[#A3E635] px-5 py-3 text-sm font-extrabold text-[#072919] shadow-md hover:bg-[#BEF264]"
+                >
+                  <span>Mulai Jelajahi Dashboard</span>
+                  <ArrowUpRight size={17} weight="bold" />
+                </button>
+                <Link
+                  href="/info"
+                  className="btn-tactile inline-flex items-center gap-2 rounded-full bg-white/12 px-5 py-3 text-sm font-bold text-white ring-1 ring-white/20 hover:bg-white/20"
+                >
+                  <Buildings size={17} weight="bold" />
+                  <span>Profil Sekolah</span>
+                </Link>
+              </div>
             </div>
+          </div>
+        </section>
 
-            {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="h-36 animate-pulse rounded-3xl card-pro" />
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {data?.classBreakdown.map((row) => {
-                  const total = row.hadir + row.sakit + row.izin + row.alpha;
-                  const rate = total > 0 ? Math.round((row.hadir / total) * 1000) / 10 : 0;
-                  return (
-                    <Link
-                      key={row.id}
-                      href={`/rekap?classId=${row.id}&period=${encodeURIComponent(period)}`}
-                      className="card-pro rounded-3xl p-5 flex flex-col justify-between gap-4 group"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h3 className="text-base font-extrabold text-[var(--ink)] group-hover:text-[var(--canopy)] transition-colors">
-                            {row.name}
-                          </h3>
-                          <p className="text-xs font-medium text-[var(--ink-muted)]">
-                            {row.total_students} Siswa • {row.homeroom_teacher}
-                          </p>
-                        </div>
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border-strong)] bg-[var(--surface-raised)] text-[var(--ink)] group-hover:bg-[#0A3D26] group-hover:text-[#A3E635] transition-colors">
-                          <ArrowUpRight size={16} weight="bold" />
-                        </span>
-                      </div>
-
-                      <div className="grid grid-cols-4 gap-2 text-left">
-                        <div>
-                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Hadir</p>
-                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.hadir}</p>
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Sakit</p>
-                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.sakit}</p>
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Izin</p>
-                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.izin}</p>
-                        </div>
-                        <div>
-                          <p className="text-[11px] font-medium text-[var(--ink-muted)]">Alpha</p>
-                          <p className="font-num text-sm font-extrabold text-[var(--ink)]">{row.alpha}</p>
-                        </div>
-                      </div>
-
-                      {/* Thick Progress Bar + Dark Obsidian Percentage Pill */}
-                      <div className="space-y-2">
-                        <div className="h-2.5 w-full overflow-hidden rounded-full bg-[var(--bg)]">
-                          <div
-                            style={{ width: `${Math.min(100, rate)}%` }}
-                            className="h-full rounded-full bg-gradient-to-r from-[#115737] to-[#84CC16]"
-                          />
-                        </div>
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-[var(--ink-muted)]">
-                            Kehadiran
-                          </span>
-                          <span className="font-num rounded-full bg-[#0B1410] px-2.5 py-0.5 text-[11px] font-extrabold text-white">
-                            {rate}%
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </section>
-        </div>
+        {/* Footer */}
+        <footer className="relative z-10 border-t border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur-sm">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-semibold text-[var(--ink-muted)]">
+            <span>E-Rekap — Sistem Rekapitulasi Kehadiran Siswa</span>
+            <span>
+              Dikembangkan oleh{" "}
+              <a
+                href="https://rhmt.biz.id"
+                target="_blank"
+                rel="noreferrer"
+                className="font-bold text-[var(--canopy)] hover:underline"
+              >
+                RHMT OFC
+              </a>
+            </span>
+          </div>
+        </footer>
       </div>
-    </AppShell>
+    </>
   );
 }

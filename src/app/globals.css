@@ -119,6 +119,46 @@ body {
   }
 }
 
+@keyframes floatOrb {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(14px, -18px, 0) scale(1.04);
+  }
+}
+
+@keyframes floatOrbReverse {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-16px, 14px, 0) scale(0.96);
+  }
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pageExitToApp {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-16px) scale(0.985);
+  }
+}
+
 .animate-splash-exit {
   animation: splashExit 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
@@ -127,11 +167,31 @@ body {
   animation: cascadeIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.animate-float-orb {
+  animation: floatOrb 9s ease-in-out infinite;
+}
+
+.animate-float-orb-rev {
+  animation: floatOrbReverse 11s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: spinSlow 36s linear infinite;
+}
+
+.animate-page-exit {
+  animation: pageExitToApp 280ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-tactile,
   .card-pro,
   .animate-splash-exit,
-  .animate-cascade {
+  .animate-cascade,
+  .animate-float-orb,
+  .animate-float-orb-rev,
+  .animate-spin-slow,
+  .animate-page-exit {
     animation: none !important;
     transition: none !important;
     transform: none !important;

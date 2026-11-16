@@ -15,7 +15,7 @@ import { withBasePath } from "@/lib/paths";
 import { SplashScreen } from "./SplashScreen";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Dashboard", icon: SquaresFour },
+  { href: "/dashboard", label: "Dashboard", icon: SquaresFour },
   { href: "/rekap", label: "Rekap", icon: Table },
   { href: "/admin", label: "Kelola", icon: SlidersHorizontal },
   { href: "/info", label: "Info", icon: Info },
@@ -44,7 +44,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen flex flex-col lg:flex-row text-[var(--ink)]">
         {/* Desktop Sidebar (>= 1024px) */}
         <aside className="no-print hidden lg:flex lg:w-68 lg:flex-col lg:fixed lg:inset-y-0 bg-[var(--surface)] border-r border-[var(--border)] shadow-[4px_0_24px_-12px_rgba(10,61,38,0.12)] z-30">
-          <div className="flex items-center gap-3.5 px-5 py-5 border-b border-[var(--border)]">
+          <Link href="/" className="flex items-center gap-3.5 px-5 py-5 border-b border-[var(--border)] hover:bg-[var(--surface-raised)] transition-colors">
             <div className="h-11 w-11 rounded-2xl p-0.5 bg-gradient-to-br from-[#115737] to-[#072919] shadow-md shrink-0">
               <img
                 src={withBasePath("/icon-madrasah.jpg")}
@@ -59,10 +59,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 E-Rekap
               </p>
               <p className="text-xs font-medium text-[var(--ink-muted)] truncate">
-                Sistem Rekap Kehadiran
+                Beranda & Portal
               </p>
             </div>
-          </div>
+          </Link>
 
           <nav aria-label="Navigasi Utama" className="flex-1 px-3.5 py-5 space-y-1.5">
             {NAV_ITEMS.map((item) => {
