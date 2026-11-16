@@ -41,28 +41,30 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <>
       <SplashScreen />
 
-      <div className="min-h-screen flex flex-col lg:flex-row bg-[var(--bg)] text-[var(--ink)]">
+      <div className="min-h-screen flex flex-col lg:flex-row text-[var(--ink)]">
         {/* Desktop Sidebar (>= 1024px) */}
-        <aside className="no-print hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 bg-[var(--surface)] border-r border-[var(--border)] z-30">
-          <div className="flex items-center gap-3 px-5 py-5 border-b border-[var(--border)]">
-            <img
-              src={withBasePath("/icon-madrasah.jpg")}
-              alt="Ikon E-Rekap"
-              width={40}
-              height={40}
-              className="h-10 w-10 rounded-xl object-cover border border-[var(--border)] shrink-0"
-            />
+        <aside className="no-print hidden lg:flex lg:w-68 lg:flex-col lg:fixed lg:inset-y-0 bg-[var(--surface)] border-r border-[var(--border-strong)] shadow-[4px_0_24px_-12px_rgba(12,20,16,0.12)] z-30">
+          <div className="flex items-center gap-3.5 px-5 py-5 border-b border-[var(--border)]">
+            <div className="h-11 w-11 rounded-2xl p-0.5 bg-gradient-to-br from-[#15803D] to-[#0A3622] shadow-md shrink-0">
+              <img
+                src={withBasePath("/icon-madrasah.jpg")}
+                alt="Ikon E-Rekap"
+                width={44}
+                height={44}
+                className="h-full w-full rounded-[14px] object-cover"
+              />
+            </div>
             <div className="min-w-0">
-              <p className="text-base font-bold tracking-tight text-[var(--ink)] truncate">
+              <p className="text-base font-extrabold tracking-tight text-[var(--ink)] truncate">
                 E-Rekap
               </p>
-              <p className="text-xs text-[var(--ink-muted)] truncate">
-                Rekap Kehadiran Siswa
+              <p className="text-xs font-medium text-[var(--ink-muted)] truncate">
+                Sistem Rekap Kehadiran
               </p>
             </div>
           </div>
 
-          <nav aria-label="Navigasi Utama" className="flex-1 px-3 py-4 space-y-1">
+          <nav aria-label="Navigasi Utama" className="flex-1 px-3.5 py-5 space-y-1.5">
             {NAV_ITEMS.map((item) => {
               const active = pathname === item.href;
               const Icon = item.icon;
@@ -70,10 +72,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                  className={`btn-tactile flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
                     active
-                      ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-                      : "text-[var(--ink-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--ink)]"
+                      ? "bg-[#0F5132] text-white shadow-[0_6px_16px_-6px_rgba(15,81,50,0.55)]"
+                      : "text-[var(--ink-muted)] hover:bg-[var(--surface-recessed)] hover:text-[var(--ink)]"
                   }`}
                 >
                   <Icon size={20} weight={active ? "fill" : "regular"} />
@@ -85,20 +87,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
           <div className="p-4 border-t border-[var(--border)]">
             <div
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold ${
+              className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold ${
                 isAdmin
-                  ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-                  : "bg-[var(--surface-muted)] text-[var(--ink-muted)]"
+                  ? "bg-[var(--accent-soft)] text-[var(--accent)] ring-1 ring-emerald-700/15"
+                  : "well-recessed text-[var(--ink-muted)]"
               }`}
             >
               {isAdmin ? (
                 <>
-                  <ShieldCheck size={16} weight="fill" />
+                  <ShieldCheck size={17} weight="fill" />
                   <span>Mode Admin (Akses Edit)</span>
                 </>
               ) : (
                 <>
-                  <Eye size={16} weight="regular" />
+                  <Eye size={17} weight="bold" />
                   <span>Mode Review (Publik)</span>
                 </>
               )}
@@ -107,46 +109,50 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         {/* Mobile Top Bar (< 1024px) */}
-        <header className="no-print lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-[var(--surface)]/95 backdrop-blur-md border-b border-[var(--border)]">
+        <header className="no-print lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-[var(--surface)]/90 backdrop-blur-xl border-b border-[var(--border)] shadow-[0_2px_12px_-4px_rgba(12,20,16,0.08)]">
           <div className="flex items-center gap-2.5">
-            <img
-              src={withBasePath("/icon-madrasah.jpg")}
-              alt="Ikon E-Rekap"
-              width={34}
-              height={34}
-              className="h-8.5 w-8.5 rounded-lg object-cover border border-[var(--border)]"
-            />
+            <div className="h-9 w-9 rounded-xl p-0.5 bg-gradient-to-br from-[#15803D] to-[#0A3622] shadow-sm">
+              <img
+                src={withBasePath("/icon-madrasah.jpg")}
+                alt="Ikon E-Rekap"
+                width={36}
+                height={36}
+                className="h-full w-full rounded-[10px] object-cover"
+              />
+            </div>
             <div>
-              <p className="text-sm font-bold leading-tight text-[var(--ink)]">E-Rekap</p>
-              <p className="text-[11px] text-[var(--ink-muted)] leading-tight">
+              <p className="text-sm font-extrabold leading-tight tracking-tight text-[var(--ink)]">
+                E-Rekap
+              </p>
+              <p className="text-[11px] font-medium text-[var(--ink-muted)] leading-tight">
                 Rekapitulasi Kehadiran
               </p>
             </div>
           </div>
 
           <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-xs ${
               isAdmin
-                ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-                : "bg-[var(--surface-muted)] text-[var(--ink-muted)]"
+                ? "bg-[#0F5132] text-white"
+                : "well-recessed text-[var(--ink-muted)]"
             }`}
           >
-            {isAdmin ? <ShieldCheck size={14} weight="fill" /> : <Eye size={14} />}
+            {isAdmin ? <ShieldCheck size={14} weight="fill" /> : <Eye size={14} weight="bold" />}
             {isAdmin ? "Admin" : "Review"}
           </span>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 lg:pl-64 pb-24 lg:pb-10">
+        <main className="flex-1 lg:pl-68 pb-28 lg:pb-12">
           <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 lg:px-8">
             {children}
           </div>
         </main>
 
-        {/* Mobile Floating Bottom Navigation (< 1024px) */}
+        {/* Mobile Dark Obsidian Floating Dock (< 1024px) */}
         <nav
           aria-label="Navigasi Bawah"
-          className="no-print lg:hidden fixed bottom-3 inset-x-3 z-40 mx-auto max-w-md rounded-2xl bg-[var(--surface)]/95 backdrop-blur-lg border border-[var(--border-strong)] shadow-[var(--shadow-float)] px-2 py-1.5"
+          className="no-print lg:hidden fixed bottom-3.5 inset-x-3.5 z-40 mx-auto max-w-md rounded-2xl bg-[#0B1712]/95 backdrop-blur-xl border border-white/15 shadow-[var(--shadow-dock)] p-1.5"
         >
           <div className="grid grid-cols-4 gap-1">
             {NAV_ITEMS.map((item) => {
@@ -156,14 +162,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex flex-col items-center justify-center min-h-[46px] rounded-xl px-1 py-1 text-[11px] font-semibold transition-colors ${
+                  className={`btn-tactile flex flex-col items-center justify-center min-h-[48px] rounded-xl px-1 py-1.5 text-[11px] font-bold transition-colors ${
                     active
-                      ? "bg-[var(--accent-soft)] text-[var(--accent)]"
-                      : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                      ? "bg-[#15803D] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.28),0_4px_12px_rgba(21,128,61,0.45)]"
+                      : "text-slate-300/80 hover:text-white"
                   }`}
                 >
-                  <Icon size={21} weight={active ? "fill" : "regular"} />
-                  <span className="mt-0.5 leading-none">{item.label}</span>
+                  <Icon size={20} weight={active ? "fill" : "regular"} />
+                  <span className="mt-1 leading-none">{item.label}</span>
                 </Link>
               );
             })}

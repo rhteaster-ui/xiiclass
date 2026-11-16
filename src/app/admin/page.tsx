@@ -467,13 +467,13 @@ export default function AdminPage() {
           {/* TAB 1: EDIT REKAP */}
           {tab === "rekap" && (
             <section className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[var(--surface)] p-4 border border-[var(--border)] shadow-[var(--shadow-tactile)]">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl card-elevated p-4">
                 <div className="flex flex-wrap items-center gap-3">
                   <select
                     value={selectedClassId}
                     onChange={(e) => setSelectedClassId(e.target.value)}
                     aria-label="Pilih Kelas"
-                    className="rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] px-3.5 py-2 text-sm font-semibold min-h-[42px]"
+                    className="rounded-xl well-recessed px-3.5 py-2 text-sm font-bold min-h-[42px]"
                   >
                     {classes.map((c) => (
                       <option key={c.id} value={String(c.id)}>
@@ -487,7 +487,7 @@ export default function AdminPage() {
                     value={period}
                     onChange={(e) => setPeriod(e.target.value)}
                     aria-label="Pilih Periode"
-                    className="font-num rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] px-3.5 py-2 text-sm font-semibold min-h-[42px]"
+                    className="font-num rounded-xl well-recessed px-3.5 py-2 text-sm font-bold min-h-[42px]"
                   />
                 </div>
 
@@ -495,17 +495,66 @@ export default function AdminPage() {
                   type="button"
                   onClick={handleSaveRekap}
                   disabled={savingRekap || entries.length === 0}
-                  className="btn-tactile inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-2.5 text-sm font-bold text-white hover:bg-[var(--accent-hover)] disabled:opacity-50"
+                  className="btn-tactile inline-flex items-center gap-2 rounded-xl bg-[#0F5132] px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(15,81,50,0.55)] hover:bg-[var(--accent-hover)] disabled:opacity-50"
                 >
                   <FloppyDisk size={18} weight="fill" />
                   <span>{savingRekap ? "Menyimpan..." : "Simpan Rekap"}</span>
                 </button>
               </div>
 
-              <div className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-tactile)] overflow-x-auto">
+              {/* Mobile Edit Cards (< 768px) */}
+              <div className="md:hidden space-y-3">
+                {entries.map((entry) => (
+                  <div key={entry.student_id} className="card-elevated rounded-2xl p-4 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <p className="text-sm font-extrabold text-[var(--ink)]">{entry.name}</p>
+                        <p className="font-num text-xs font-medium text-[var(--ink-muted)]">{entry.nis}</p>
+                      </div>
+                      <span className="font-num rounded-full well-recessed px-2.5 py-0.5 text-xs font-bold text-[var(--ink-muted)]">
+                        {entry.gender}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
+                      {([
+                        { field: "hadir" as const, label: "Hadir", cls: "bg-[var(--status-hadir-bg)] text-[var(--status-hadir-fg)]" },
+                        { field: "sakit" as const, label: "Sakit", cls: "bg-[var(--status-sakit-bg)] text-[var(--status-sakit-fg)]" },
+                        { field: "izin" as const, label: "Izin", cls: "bg-[var(--status-izin-bg)] text-[var(--status-izin-fg)]" },
+                        { field: "alpha" as const, label: "Alpha", cls: "bg-[var(--status-alpha-bg)] text-[var(--status-alpha-fg)]" },
+                      ]).map((f) => (
+                        <div key={f.field} className={`rounded-xl p-2 text-center ${f.cls}`}>
+                          <label className="block text-[10px] font-bold uppercase">{f.label}</label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={entry[f.field]}
+                            onChange={(e) =>
+                              updateEntryField(entry.student_id, f.field, e.target.value)
+                            }
+                            aria-label={`${f.label} ${entry.name}`}
+                            className="font-num mt-1 w-full rounded-lg bg-white/85 py-1 text-center text-sm font-extrabold text-[var(--ink)]"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <input
+                      type="text"
+                      value={entry.note}
+                      onChange={(e) =>
+                        updateEntryField(entry.student_id, "note", e.target.value)
+                      }
+                      placeholder="Catatan opsional..."
+                      className="w-full rounded-xl well-recessed px-3 py-2 text-xs font-medium text-[var(--ink)]"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Edit Table (>= 768px) */}
+              <div className="hidden md:block card-elevated rounded-2xl overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-[var(--surface-raised)] border-b border-[var(--border)] text-xs font-bold uppercase text-[var(--ink-muted)]">
+                    <tr className="bg-[var(--surface-raised)] border-b border-[var(--border-strong)] text-xs font-bold uppercase text-[var(--ink-muted)]">
                       <th className="py-3 px-4">Siswa</th>
                       <th className="py-3 px-2 text-center w-20">Hadir</th>
                       <th className="py-3 px-2 text-center w-20">Sakit</th>
@@ -518,7 +567,7 @@ export default function AdminPage() {
                     {entries.map((entry) => (
                       <tr key={entry.student_id}>
                         <td className="py-3 px-4">
-                          <p className="font-semibold text-[var(--ink)]">{entry.name}</p>
+                          <p className="font-bold text-[var(--ink)]">{entry.name}</p>
                           <p className="font-num text-xs text-[var(--ink-muted)]">{entry.nis}</p>
                         </td>
                         {(["hadir", "sakit", "izin", "alpha"] as const).map((field) => (
@@ -531,7 +580,7 @@ export default function AdminPage() {
                                 updateEntryField(entry.student_id, field, e.target.value)
                               }
                               aria-label={`${field} ${entry.name}`}
-                              className="font-num w-16 rounded-lg border border-[var(--border-strong)] bg-[var(--surface-raised)] px-2 py-1.5 text-center text-sm font-bold"
+                              className="font-num w-16 rounded-xl well-recessed px-2 py-1.5 text-center text-sm font-extrabold"
                             />
                           </td>
                         ))}
@@ -543,7 +592,7 @@ export default function AdminPage() {
                               updateEntryField(entry.student_id, "note", e.target.value)
                             }
                             placeholder="Catatan opsional..."
-                            className="w-full rounded-lg border border-[var(--border-strong)] bg-[var(--surface-raised)] px-2.5 py-1.5 text-xs"
+                            className="w-full rounded-xl well-recessed px-3 py-1.5 text-xs"
                           />
                         </td>
                       </tr>

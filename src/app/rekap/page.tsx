@@ -45,6 +45,13 @@ interface ClassInfo {
   homeroom_teacher: string;
 }
 
+function initialsOf(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+}
+
 function RekapContent() {
   const searchParams = useSearchParams();
   const [period, setPeriod] = useState(
@@ -178,11 +185,11 @@ function RekapContent() {
         {/* Screen Header & Action Controls */}
         <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between animate-cascade">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-[var(--ink)]">
-              Tabel Rekapitulasi Kehadiran
+            <h1 className="text-2xl font-extrabold tracking-tight text-[var(--ink)]">
+              Rekapitulasi Kehadiran
             </h1>
             <p className="text-sm text-[var(--ink-muted)]">
-              Tampilan formal siap cetak dan ekspor spreadsheet.
+              Data resmi terverifikasi — siap cetak A4 dan ekspor spreadsheet.
             </p>
           </div>
 
@@ -191,7 +198,7 @@ function RekapContent() {
               type="button"
               onClick={handleExportExcel}
               disabled={sortedRows.length === 0}
-              className="btn-tactile inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2.5 text-sm font-semibold text-[var(--ink)] shadow-xs hover:bg-[var(--surface-muted)] disabled:opacity-50"
+              className="btn-tactile inline-flex items-center gap-2 rounded-xl card-elevated px-4 py-2.5 text-sm font-bold text-[var(--ink)] disabled:opacity-50"
             >
               <FileXls size={18} weight="bold" className="text-[var(--accent)]" />
               <span>Ekspor Excel</span>
@@ -200,7 +207,7 @@ function RekapContent() {
               type="button"
               onClick={() => window.print()}
               disabled={sortedRows.length === 0}
-              className="btn-tactile inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-[var(--accent-hover)] disabled:opacity-50"
+              className="btn-tactile inline-flex items-center gap-2 rounded-xl bg-[#0F5132] px-4 py-2.5 text-sm font-bold text-white shadow-[0_8px_18px_-6px_rgba(15,81,50,0.55)] hover:bg-[var(--accent-hover)] disabled:opacity-50"
             >
               <Printer size={18} weight="bold" />
               <span>Cetak A4</span>
@@ -208,48 +215,71 @@ function RekapContent() {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Search + Pill Filters */}
         <section
           aria-label="Filter Rekap"
-          className="no-print grid grid-cols-1 sm:grid-cols-3 gap-3 rounded-2xl bg-[var(--surface)] p-4 border border-[var(--border)] shadow-[var(--shadow-tactile)] animate-cascade"
+          className="no-print space-y-3 animate-cascade"
           style={{ animationDelay: "40ms" }}
         >
-          <div className="relative">
-            <MagnifyingGlass
-              size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-muted)] pointer-events-none"
-            />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Cari nama atau NIS/NISN..."
-              aria-label="Cari nama atau NIS"
-              className="w-full rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] pl-10 pr-3 py-2 text-sm text-[var(--ink)] min-h-[42px]"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="relative sm:col-span-2">
+              <MagnifyingGlass
+                size={18}
+                weight="bold"
+                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-muted)] pointer-events-none"
+              />
+              <input
+                type="search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Cari nama siswa atau NIS/NISN..."
+                aria-label="Cari nama atau NIS"
+                className="w-full rounded-2xl card-elevated pl-10 pr-4 py-2.5 text-sm font-medium text-[var(--ink)] min-h-[44px]"
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-2 rounded-2xl card-elevated px-3.5 py-2 min-h-[44px]">
+              <span className="text-xs font-bold text-[var(--ink-muted)]">Periode</span>
+              <input
+                type="month"
+                value={period}
+                onChange={(e) => setPeriod(e.target.value)}
+                aria-label="Pilih Periode Bulan"
+                className="font-num bg-transparent text-sm font-bold text-[var(--ink)] focus:outline-none"
+              />
+            </div>
           </div>
 
-          <select
-            value={classId}
-            onChange={(e) => setClassId(e.target.value)}
-            aria-label="Pilih Kelas"
-            className="rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] px-3.5 py-2 text-sm font-semibold text-[var(--ink)] min-h-[42px]"
-          >
-            <option value="all">Semua Kelas</option>
-            {classes.map((cls) => (
-              <option key={cls.id} value={String(cls.id)}>
-                {cls.name}
-              </option>
-            ))}
-          </select>
-
-          <input
-            type="month"
-            value={period}
-            onChange={(e) => setPeriod(e.target.value)}
-            aria-label="Pilih Periode Bulan"
-            className="font-num rounded-xl border border-[var(--border-strong)] bg-[var(--surface-raised)] px-3.5 py-2 text-sm font-semibold text-[var(--ink)] min-h-[42px]"
-          />
+          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar rounded-2xl well-recessed p-1.5">
+            <button
+              type="button"
+              onClick={() => setClassId("all")}
+              className={`btn-tactile shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold ${
+                classId === "all"
+                  ? "bg-white text-[var(--ink)] shadow-sm"
+                  : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+              }`}
+            >
+              Semua Kelas
+            </button>
+            {classes.map((cls) => {
+              const active = classId === String(cls.id);
+              return (
+                <button
+                  key={cls.id}
+                  type="button"
+                  onClick={() => setClassId(String(cls.id))}
+                  className={`btn-tactile shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold ${
+                    active
+                      ? "bg-white text-[var(--accent)] shadow-sm"
+                      : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
+                  }`}
+                >
+                  {cls.name}
+                </button>
+              );
+            })}
+          </div>
         </section>
 
         {/* Error State */}
@@ -273,127 +303,209 @@ function RekapContent() {
           </div>
         )}
 
-        {/* Formal Table */}
-        <section
-          aria-label="Daftar Rekapitulasi Siswa"
-          className="rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-tactile)] overflow-hidden animate-cascade"
-          style={{ animationDelay: "80ms" }}
-        >
-          {loading ? (
-            <div className="p-5 space-y-3">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="h-12 w-full animate-pulse rounded-xl bg-[var(--surface-muted)]" />
-              ))}
-            </div>
-          ) : sortedRows.length === 0 ? (
-            <div className="p-10 text-center space-y-1">
-              <p className="text-sm font-semibold text-[var(--ink)]">
-                Data siswa tidak ditemukan
-              </p>
-              <p className="text-xs text-[var(--ink-muted)]">
-                Coba ubah kata kunci pencarian atau filter kelas.
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="print-table w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-[var(--surface-raised)] border-b border-[var(--border)] text-xs font-bold uppercase tracking-wider text-[var(--ink-muted)]">
-                    <th className="py-3 px-3.5 text-right w-12">No</th>
-                    <th className="py-3 px-3.5">NIS/NISN</th>
-                    <th
-                      className="py-3 px-3.5"
-                      aria-sort={
-                        sortBy === "name"
-                          ? sortDir === "asc"
-                            ? "ascending"
-                            : "descending"
-                          : "none"
-                      }
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handleSort("name")}
-                        className="inline-flex items-center gap-1 hover:text-[var(--ink)]"
-                      >
-                        <span>Nama Siswa</span>
-                        <ArrowsDownUp size={13} />
-                      </button>
-                    </th>
-                    <th className="py-3 px-3">Kelas</th>
-                    <th className="py-3 px-2.5 text-center">L/P</th>
-                    <th className="py-3 px-3 text-right">H</th>
-                    <th className="py-3 px-3 text-right">S</th>
-                    <th className="py-3 px-3 text-right">I</th>
-                    <th className="py-3 px-3 text-right">A</th>
-                    <th
-                      className="py-3 px-3.5 text-right"
-                      aria-sort={
-                        sortBy === "percentage"
-                          ? sortDir === "asc"
-                            ? "ascending"
-                            : "descending"
-                          : "none"
-                      }
-                    >
-                      <button
-                        type="button"
-                        onClick={() => handleSort("percentage")}
-                        className="inline-flex items-center justify-end gap-1 hover:text-[var(--ink)] ml-auto"
-                      >
-                        <span>%</span>
-                        <ArrowsDownUp size={13} />
-                      </button>
-                    </th>
-                    <th className="py-3 px-4">Keterangan</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[var(--border)] text-sm">
-                  {sortedRows.map((row, index) => (
-                    <tr
-                      key={row.student_id}
-                      className="hover:bg-[var(--surface-raised)] transition-colors"
-                    >
-                      <td className="py-3 px-3.5 text-right font-num text-[var(--ink-muted)]">
-                        {index + 1}
-                      </td>
-                      <td className="py-3 px-3.5 font-num text-xs font-medium text-[var(--ink-muted)]">
-                        {row.nis}
-                      </td>
-                      <td className="py-3 px-3.5 font-semibold text-[var(--ink)] whitespace-nowrap">
-                        {row.name}
-                      </td>
-                      <td className="py-3 px-3 text-xs font-semibold text-[var(--ink-muted)] whitespace-nowrap">
-                        {row.class_name}
-                      </td>
-                      <td className="py-3 px-2.5 text-center font-num text-xs font-semibold">
-                        {row.gender}
-                      </td>
-                      <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-hadir-fg)]">
+        {/* Loading / Empty */}
+        {loading ? (
+          <div className="space-y-3">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-20 w-full animate-pulse rounded-2xl card-elevated" />
+            ))}
+          </div>
+        ) : sortedRows.length === 0 ? (
+          <div className="card-elevated rounded-2xl p-10 text-center space-y-1">
+            <p className="text-sm font-bold text-[var(--ink)]">Data siswa tidak ditemukan</p>
+            <p className="text-xs text-[var(--ink-muted)]">
+              Coba ubah kata kunci pencarian atau pilih kelas lain.
+            </p>
+          </div>
+        ) : (
+          <>
+            {/* Mobile Native Card List (< 768px, hidden on Print) */}
+            <section
+              aria-label="Kartu Rekapitulasi Mobile"
+              className="no-print md:hidden space-y-3 animate-cascade"
+              style={{ animationDelay: "80ms" }}
+            >
+              <div className="flex items-center justify-between px-1 text-xs font-bold text-[var(--ink-muted)]">
+                <span>{sortedRows.length} Siswa</span>
+                <button
+                  type="button"
+                  onClick={() => handleSort(sortBy === "name" ? "percentage" : "name")}
+                  className="inline-flex items-center gap-1 text-[var(--accent)]"
+                >
+                  <ArrowsDownUp size={14} weight="bold" />
+                  <span>Urut: {sortBy === "name" ? "Nama" : "Persentase"}</span>
+                </button>
+              </div>
+
+              {sortedRows.map((row) => (
+                <article
+                  key={row.student_id}
+                  className="card-elevated rounded-2xl p-4 space-y-3"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent-soft)] font-num text-xs font-extrabold text-[var(--accent)]">
+                        {initialsOf(row.name)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-extrabold text-[var(--ink)] truncate">
+                          {row.name}
+                        </p>
+                        <p className="font-num text-[11px] font-medium text-[var(--ink-muted)]">
+                          {row.nis} • {row.class_name} ({row.gender})
+                        </p>
+                      </div>
+                    </div>
+
+                    <span className="font-num shrink-0 rounded-full bg-[var(--accent-soft)] px-2.5 py-1 text-xs font-extrabold text-[var(--accent)]">
+                      {row.percentage}%
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-1.5 text-center">
+                    <div className="rounded-xl bg-[var(--status-hadir-bg)] py-1.5">
+                      <p className="text-[10px] font-bold text-[var(--status-hadir-fg)]">Hadir</p>
+                      <p className="font-num text-sm font-extrabold text-[var(--status-hadir-fg)]">
                         {row.hadir}
-                      </td>
-                      <td className="py-3 px-3 text-right font-num font-semibold text-[var(--status-sakit-fg)]">
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-[var(--status-sakit-bg)] py-1.5">
+                      <p className="text-[10px] font-bold text-[var(--status-sakit-fg)]">Sakit</p>
+                      <p className="font-num text-sm font-extrabold text-[var(--status-sakit-fg)]">
                         {row.sakit}
-                      </td>
-                      <td className="py-3 px-3 text-right font-num font-semibold text-[var(--status-izin-fg)]">
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-[var(--status-izin-bg)] py-1.5">
+                      <p className="text-[10px] font-bold text-[var(--status-izin-fg)]">Izin</p>
+                      <p className="font-num text-sm font-extrabold text-[var(--status-izin-fg)]">
                         {row.izin}
-                      </td>
-                      <td className="py-3 px-3 text-right font-num font-semibold text-[var(--status-alpha-fg)]">
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-[var(--status-alpha-bg)] py-1.5">
+                      <p className="text-[10px] font-bold text-[var(--status-alpha-fg)]">Alpha</p>
+                      <p className="font-num text-sm font-extrabold text-[var(--status-alpha-fg)]">
                         {row.alpha}
-                      </td>
-                      <td className="py-3 px-3.5 text-right font-num font-bold text-[var(--ink)]">
-                        {row.percentage}%
-                      </td>
-                      <td className="py-3 px-4 text-xs text-[var(--ink-muted)] max-w-[200px] truncate">
-                        {row.note || "—"}
-                      </td>
+                      </p>
+                    </div>
+                  </div>
+
+                  {row.note && (
+                    <p className="rounded-xl well-recessed px-3 py-1.5 text-xs text-[var(--ink-muted)]">
+                      Catatan: <span className="font-semibold text-[var(--ink)]">{row.note}</span>
+                    </p>
+                  )}
+                </article>
+              ))}
+            </section>
+
+            {/* Desktop Formal Ledger Table (>= 768px & Always Visible on Print) */}
+            <section
+              aria-label="Daftar Rekapitulasi Siswa"
+              className="hidden md:block print-only card-elevated rounded-2xl overflow-hidden animate-cascade"
+              style={{ animationDelay: "80ms" }}
+            >
+              <div className="overflow-x-auto">
+                <table className="print-table w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-[var(--surface-raised)] border-b border-[var(--border-strong)] text-xs font-bold uppercase tracking-wider text-[var(--ink-muted)]">
+                      <th className="py-3.5 px-4 text-right w-12">No</th>
+                      <th className="py-3.5 px-3.5">NIS/NISN</th>
+                      <th
+                        className="py-3.5 px-3.5"
+                        aria-sort={
+                          sortBy === "name"
+                            ? sortDir === "asc"
+                              ? "ascending"
+                              : "descending"
+                            : "none"
+                        }
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleSort("name")}
+                          className="inline-flex items-center gap-1 hover:text-[var(--ink)]"
+                        >
+                          <span>Nama Siswa</span>
+                          <ArrowsDownUp size={13} />
+                        </button>
+                      </th>
+                      <th className="py-3.5 px-3">Kelas</th>
+                      <th className="py-3.5 px-2.5 text-center">L/P</th>
+                      <th className="py-3.5 px-3 text-right">H</th>
+                      <th className="py-3.5 px-3 text-right">S</th>
+                      <th className="py-3.5 px-3 text-right">I</th>
+                      <th className="py-3.5 px-3 text-right">A</th>
+                      <th
+                        className="py-3.5 px-4 text-right"
+                        aria-sort={
+                          sortBy === "percentage"
+                            ? sortDir === "asc"
+                              ? "ascending"
+                              : "descending"
+                            : "none"
+                        }
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleSort("percentage")}
+                          className="inline-flex items-center justify-end gap-1 hover:text-[var(--ink)] ml-auto"
+                        >
+                          <span>%</span>
+                          <ArrowsDownUp size={13} />
+                        </button>
+                      </th>
+                      <th className="py-3.5 px-4">Keterangan</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
+                  </thead>
+                  <tbody className="divide-y divide-[var(--border)] text-sm">
+                    {sortedRows.map((row, index) => (
+                      <tr
+                        key={row.student_id}
+                        className="hover:bg-[var(--surface-raised)] transition-colors"
+                      >
+                        <td className="py-3 px-4 text-right font-num text-[var(--ink-muted)]">
+                          {index + 1}
+                        </td>
+                        <td className="py-3 px-3.5 font-num text-xs font-semibold text-[var(--ink-muted)]">
+                          {row.nis}
+                        </td>
+                        <td className="py-3 px-3.5 font-bold text-[var(--ink)] whitespace-nowrap">
+                          {row.name}
+                        </td>
+                        <td className="py-3 px-3 text-xs font-bold text-[var(--ink-muted)] whitespace-nowrap">
+                          {row.class_name}
+                        </td>
+                        <td className="py-3 px-2.5 text-center font-num text-xs font-bold">
+                          {row.gender}
+                        </td>
+                        <td className="py-3 px-3 text-right font-num font-extrabold text-[var(--status-hadir-fg)]">
+                          {row.hadir}
+                        </td>
+                        <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-sakit-fg)]">
+                          {row.sakit}
+                        </td>
+                        <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-izin-fg)]">
+                          {row.izin}
+                        </td>
+                        <td className="py-3 px-3 text-right font-num font-bold text-[var(--status-alpha-fg)]">
+                          {row.alpha}
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <span className="font-num inline-flex items-center rounded-full bg-[var(--accent-soft)] px-2.5 py-0.5 text-xs font-extrabold text-[var(--accent)]">
+                            {row.percentage}%
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-xs text-[var(--ink-muted)] max-w-[200px] truncate">
+                          {row.note || "—"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </AppShell>
   );

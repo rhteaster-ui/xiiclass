@@ -49,7 +49,7 @@ export default function InfoPage() {
           {/* Profil Sekolah */}
           <section
             aria-label="Profil Sekolah"
-            className="lg:col-span-2 rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[var(--shadow-tactile)] overflow-hidden animate-cascade"
+            className="lg:col-span-2 card-elevated rounded-3xl overflow-hidden animate-cascade"
             style={{ animationDelay: "50ms" }}
           >
             <div className="relative h-32 sm:h-40 overflow-hidden bg-[#0F5132]">
@@ -135,7 +135,7 @@ export default function InfoPage() {
           {/* Info Developer */}
           <section
             aria-label="Informasi Developer"
-            className="rounded-2xl bg-[var(--surface)] p-5 sm:p-6 border border-[var(--border)] shadow-[var(--shadow-tactile)] flex flex-col justify-between gap-5 animate-cascade"
+            className="card-elevated rounded-3xl p-5 sm:p-6 flex flex-col justify-between gap-5 animate-cascade"
             style={{ animationDelay: "100ms" }}
           >
             <div className="space-y-4">
