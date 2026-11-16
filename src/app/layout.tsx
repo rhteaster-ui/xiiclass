@@ -1,0 +1,48 @@
+import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import "./globals.css";
+
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-sans-base",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono-base",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+export const metadata: Metadata = {
+  title: "E-Rekap — Sistem Rekapitulasi Kehadiran",
+  description: "Aplikasi rekapitulasi kehadiran siswa berstandar formal sekolah.",
+  manifest: `${basePath}/manifest.json`,
+  icons: {
+    icon: `${basePath}/icon-madrasah.jpg`,
+    apple: `${basePath}/icon-madrasah.jpg`,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0F5132",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="id"
+      className={`${plusJakarta.variable} ${jetbrainsMono.variable} h-full`}
+    >
+      <body className="min-h-full flex flex-col antialiased">{children}</body>
+    </html>
+  );
+}
