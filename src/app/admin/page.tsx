@@ -578,7 +578,7 @@ export default function AdminPage() {
             {/* TAB 1: EDIT REKAP & BACKUP XLSX */}
             {tab === "rekap" && (
               <section className="space-y-4">
-                <div className="card-pro rounded-3xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <div className="card-pro rounded-3xl p-4 flex flex-col lg:flex-row lg:items-center justify-between gap-3 relative z-30">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <CustomSelect
                       value={selectedClassId}
@@ -631,7 +631,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Consistent Formal Editable Table */}
-                <div className="card-pro rounded-3xl overflow-hidden">
+                <div className="card-pro rounded-3xl overflow-hidden relative z-10">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[680px]">
                       <thead>

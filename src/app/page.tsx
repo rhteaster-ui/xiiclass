@@ -25,7 +25,7 @@ interface LiveSummary {
   semester: string;
 }
 
-const TYPED_PHRASES = ["Lebih Presisi.", "Lebih Transparan.", "Siap Cetak A4."];
+const TYPED_PHRASES = ["Lebih Transparan."];
 
 function TypewriterHeading() {
   const [phraseIdx, setPhraseIdx] = useState(0);
@@ -34,7 +34,7 @@ function TypewriterHeading() {
 
   useEffect(() => {
     const current = TYPED_PHRASES[phraseIdx];
-    const delay = deleting ? 45 : charIdx === current.length ? 1800 : 80;
+    const delay = deleting ? 55 : charIdx === current.length ? 3500 : 115;
     const t = setTimeout(() => {
       if (!deleting) {
         if (charIdx < current.length) {
@@ -152,21 +152,8 @@ export default function LandingPage() {
         </header>
 
         {/* Hero Section with Typewriter & 3D Depth Cards */}
-        <section className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-6 pb-12 text-center">
+        <section className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-6 pt-8 pb-12 text-center">
           <div className="mx-auto max-w-3xl space-y-6">
-            <div
-              className="animate-cascade inline-flex items-center gap-2 rounded-full bg-white px-3.5 py-1.5 text-xs font-extrabold text-[var(--canopy)] shadow-sm ring-1 ring-[var(--border-strong)]"
-              style={{ animationDelay: "60ms" }}
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
-              </span>
-              <span className="font-num">
-                TA {stats.academicYear} • Semester {stats.semester}
-              </span>
-            </div>
-
             <h1
               className="animate-cascade text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[var(--ink)] leading-[1.12] min-h-[2.3em] sm:min-h-[2.2em]"
               style={{ animationDelay: "140ms" }}

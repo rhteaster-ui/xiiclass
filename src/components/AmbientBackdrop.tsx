@@ -44,11 +44,11 @@ export function AmbientBackdrop({ variant = "light" }: { variant?: "light" | "ca
       </svg>
 
       {/* Lightweight Floating Academic & Rekap Icon Chips */}
-      <div className="animate-float-icon absolute top-28 left-[5%] sm:left-[9%] flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 text-[#0A3D26] shadow-[0_12px_28px_-8px_rgba(10,61,38,0.22)] ring-1 ring-[#0A3D26]/10 backdrop-blur-sm">
+      <div className="animate-float-icon absolute top-28 left-[5%] sm:left-[9%] hidden md:flex h-11 w-11 items-center justify-center rounded-2xl bg-white/80 text-[#0A3D26] shadow-[0_12px_28px_-8px_rgba(10,61,38,0.22)] ring-1 ring-[#0A3D26]/10 backdrop-blur-sm">
         <PencilSimpleLine size={20} weight="duotone" />
       </div>
 
-      <div className="animate-float-icon-alt absolute top-44 right-[5%] sm:right-[10%] flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0A3D26]/90 text-[#A3E635] shadow-[0_14px_30px_-8px_rgba(10,61,38,0.35)] ring-1 ring-white/20">
+      <div className="animate-float-icon-alt absolute top-44 right-[5%] sm:right-[10%] hidden md:flex h-12 w-12 items-center justify-center rounded-2xl bg-[#0A3D26]/90 text-[#A3E635] shadow-[0_14px_30px_-8px_rgba(10,61,38,0.35)] ring-1 ring-white/20">
         <ClipboardText size={22} weight="duotone" />
       </div>
 

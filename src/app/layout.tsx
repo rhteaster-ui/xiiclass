@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/xiiclass";
 
 export const metadata: Metadata = {
   title: "E-Rekap — Sistem Rekapitulasi Kehadiran",

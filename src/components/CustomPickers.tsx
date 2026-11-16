@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { CalendarBlank, CaretDown, CaretLeft, CaretRight, Check } from "@phosphor-icons/react";
 
 const MONTHS_ID = [
@@ -31,7 +32,9 @@ export function PeriodPicker({
 }) {
   const [open, setOpen] = useState(false);
   const [pickerYear, setPickerYear] = useState(() => Number(value.split("-")[0]) || 2026);
+  const [coords, setCoords] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
   const ref = useRef<HTMLDivElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const y = Number(value.split("-")[0]);
@@ -39,8 +42,36 @@ export function PeriodPicker({
   }, [value]);
 
   useEffect(() => {
+    const updatePosition = () => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const width = 256; // w-64
+      const left = Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12));
+      const top = Math.min(rect.bottom + 8, window.innerHeight - 280);
+      setCoords({ top, left });
+    };
+
+    if (open) {
+      updatePosition();
+      window.addEventListener("resize", updatePosition);
+      window.addEventListener("scroll", updatePosition, true);
+    }
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [open]);
+
+  useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      const target = e.target as Node;
+      if (
+        ref.current &&
+        !ref.current.contains(target) &&
+        (!popoverRef.current || !popoverRef.current.contains(target))
+      ) {
+        setOpen(false);
+      }
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setOpen(false);
@@ -57,7 +88,7 @@ export function PeriodPicker({
   const currentYear = Number(value.split("-")[0]);
 
   return (
-    <div ref={ref} className="relative inline-block">
+    <div ref={ref} className={`relative inline-block ${open ? "z-50" : "z-auto"}`}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
@@ -82,12 +113,16 @@ export function PeriodPicker({
         />
       </button>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-label="Pilih Bulan dan Tahun"
-          className="absolute right-0 mt-2 w-64 rounded-3xl bg-[var(--surface)] p-4 text-[var(--ink)] shadow-[0_22px_50px_-12px_rgba(7,41,25,0.32)] ring-1 ring-[var(--border-strong)] z-50 animate-cascade"
-        >
+      {open &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            role="dialog"
+            aria-label="Pilih Bulan dan Tahun"
+            style={{ top: coords.top, left: coords.left }}
+            className="fixed w-64 rounded-3xl bg-[var(--surface)] p-4 text-[var(--ink)] shadow-[0_22px_50px_-12px_rgba(7,41,25,0.32)] ring-1 ring-[var(--border-strong)] z-[9999] animate-cascade"
+          >
           <div className="flex items-center justify-between mb-3">
             <button
               type="button"
@@ -133,8 +168,9 @@ export function PeriodPicker({
               );
             })}
           </div>
-        </div>
-      )}
+        </div>,
+          document.body
+        )}
     </div>
   );
 }
@@ -178,7 +214,7 @@ export function CustomSelect({
   const current = options.find((o) => o.value === value) || options[0];
 
   return (
-    <div ref={ref} className={`relative inline-block ${className}`}>
+    <div ref={ref} className={`relative inline-block ${className} ${open ? "z-50" : "z-auto"}`}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
